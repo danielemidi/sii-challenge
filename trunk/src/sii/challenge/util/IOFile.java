@@ -47,16 +47,14 @@ public class IOFile {
 	public void insertValue(String path) throws Exception{
 		Connection connection= this.dataSource.getConnection();	
 		PreparedStatement statement = null;
-		String insert="insert into movie_actors(idmovie_actors,movieID,actorID,actorName,ranking) " +
-				"values(?,?,?,?,?)";
+		String insert="insert into movie_actors(movieID,actorID,actorName,ranking) " +
+				"values(?,?,?,?)";
 		try{
 			FileReader fileDat = new FileReader(path);
 			BufferedReader bf = new BufferedReader(fileDat);
 			
 			String line = bf.readLine();
 	
-			int count = 1;
-			System.out.println(line);
 			while(line!=null){
 				
 				line = bf.readLine();
@@ -81,16 +79,14 @@ public class IOFile {
 //					int r = s.nextInt();
 					
 					statement=connection.prepareStatement(insert);
-					statement.setInt(1, count);
-					statement.setInt(2, movid);
+					statement.setInt(1, movid);
 					statement.setString(3, entityID);
 					statement.setString(4, entityName);
 					statement.setInt(5, rk);
 					statement.executeUpdate();
-//					System.out.println(" è stata inserita nel db la riga \n"+movid +"\t"+ entityID +"\t"+ entityName +"\t"+r);
+				System.out.println(" è stata inserita nel db la riga \n"+movid +"\t"+ entityID +"\t"+ entityName +"\t"+rk);
 
 				}
-				count++;
 			}
 		}catch(Exception e){
 			
