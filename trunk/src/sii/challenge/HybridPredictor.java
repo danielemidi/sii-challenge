@@ -3,6 +3,7 @@ package sii.challenge;
 import java.util.List;
 
 import sii.challenge.domain.Movie;
+import sii.challenge.domain.MovieRating;
 import sii.challenge.domain.User;
 
 public class HybridPredictor implements IPredictor {

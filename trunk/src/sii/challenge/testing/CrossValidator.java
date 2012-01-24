@@ -1,5 +1,8 @@
 package sii.challenge.testing;
 
+import java.util.List;
+import sii.challenge.domain.*;
+
 /** 
  * 
  * - Riceve un dataset di training
@@ -16,6 +19,7 @@ public class CrossValidator {
 	public float runTest(List<MovieRating> dataset)
 	{
 		
+		return 0;
 	}
 	
 }
