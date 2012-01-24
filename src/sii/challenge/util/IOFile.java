@@ -5,107 +5,69 @@ import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+<<<<<<< .mine
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Scanner;
+=======
+>>>>>>> .r14
+
+import sii.challenge.domain.MovieRating;
 
 
 public class IOFile {
-	
-	private DataSource dataSource = null;
-	
-	public IOFile() {
-		super();
-		this.dataSource = new DataSource();
-	}
-
-	public static void leggirigasplit(String path) throws Exception{
 		
+	public List<MovieRating> leggirigasplit(String path) throws Exception{
 		
 		FileReader fileDat = new FileReader(path);
 		BufferedReader bf = new BufferedReader(fileDat);
 		
 		String line = bf.readLine();
-		
-		
-		int count = 1;
+		List<MovieRating> movieRatingList= new LinkedList<MovieRating>();
+		MovieRating mr;
+		int uID;
+		int mID;
+		long ts;
 		while(line!=null){
-			
 			line = bf.readLine();
 			if(line!=null){
-				String s[] =line.split("\t");
-				int movid = Integer.parseInt(s[0]);
-				String entityID = s[1];
-				String entityName = s[2];
-				int rk = Integer.parseInt(s[3]);
-				System.out.println(" è stata inserita nel db la riga \n"+movid +"\t"+ entityID +"\t"+ entityName +"\t"+rk);
-
-			}
+				String s[] = line.split("\t");
+				uID = Integer.parseInt(s[0]);
+				mID = Integer.parseInt(s[1]);
+				ts = Long.parseLong(s[2]);
+				mr = new MovieRating(uID,mID,ts,0);
+				movieRatingList.add(mr);
+			}			
 		}
+		return movieRatingList;
 	}
 	
-	public void insertValue(String path) throws Exception{
-		Connection connection= this.dataSource.getConnection();	
-		PreparedStatement statement = null;
-		String insert="insert into movie_actors(movieID,actorID,actorName,ranking) " +
-				"values(?,?,?,?)";
-		try{
-			FileReader fileDat = new FileReader(path);
-			BufferedReader bf = new BufferedReader(fileDat);
-			
-			String line = bf.readLine();
-	
-			while(line!=null){
-				
-				line = bf.readLine();
-				if(line!=null){
-					
-					String s[] =line.split("\t");
-					int movid = Integer.parseInt(s[0]);
-					String entityID = s[1];
-					String entityName = s[2];
-					int rk = Integer.parseInt(s[3]);
-					
-//					Scanner s = new Scanner(line);
-//					
-//					int movid = s.nextInt();
-//					String entityID = s.next();
-//					String entityName=""; 
-//					while(!s.hasNextInt()){
-//						String str = s.next();
-//						entityName= entityName.concat(str+" ");	
-//					}
-//						
-//					int r = s.nextInt();
-					
-					statement=connection.prepareStatement(insert);
-					statement.setInt(1, movid);
-					statement.setString(3, entityID);
-					statement.setString(4, entityName);
-					statement.setInt(5, rk);
-					statement.executeUpdate();
-				System.out.println(" è stata inserita nel db la riga \n"+movid +"\t"+ entityID +"\t"+ entityName +"\t"+rk);
-
-				}
-			}
-		}catch(Exception e){
-			
-			throw new Exception(e.getMessage());
+	public static void scriviOut(List<MovieRating> movieRatings) throws Exception{
 		
-		}finally{
-			try
-			{
-				if(statement!=null) 	statement.close();
-				if(connection!=null)	connection.close();
-			}
-			catch(SQLException e)
-			{
-				throw new Exception(e.getMessage());
-			}
+		
+		String line = bf.readLine();
+		List<MovieRating> lineList= new LinkedList<MovieRating>();
+		MovieRating mr;
+		int uID;
+		int mID;
+		long ts;
+		while(line!=null){
+			line = bf.readLine();
+			if(line!=null){
+				String s[] = line.split("\t");
+				uID = Integer.parseInt(s[0]);
+				mID = Integer.parseInt(s[1]);
+				ts = Long.parseLong(s[2]);
+				mr = new MovieRating(uID,mID,ts,0);
+				lineList.add(mr);
+			}			
 		}
 	}
+
 	
 	public static void main(String[] args) throws Exception{
-		IOFile f = new IOFile();
-		f.insertValue("C:/Users/Antedesk/Desktop/Challenge/ChallengeDataset/movie_actors.dat");
-		
+		leggirigasplit("C:/Users/Antedesk/Desktop/Challenge/ChallengeDataset/user_ratedmovies.dat");
+		System.out.println("done");
 	}
 
 

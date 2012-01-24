@@ -4,10 +4,10 @@ import java.util.List;
 
 public interface UserDAO {
 
-	public List<String> doRetriveFavoriteActors();
-	public List<String> doRetriveFavoriteDirectors();
-	public List<String> doRetriveFavoriteGenres();
-	public List<String> doRetriveFavoriteCountries();
-	public List<String> doRetriveFavoriteYears();
+	public List<String> doRetriveFavoriteActors() throws Exception;
+	public List<String> doRetriveFavoriteDirectors() throws Exception;
+	public List<String> doRetriveFavoriteGenres() throws Exception;
+	public List<String> doRetriveFavoriteCountries() throws Exception;
+	public List<String> doRetriveFavoriteYears() throws Exception;
 	
 }
