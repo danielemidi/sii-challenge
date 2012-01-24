@@ -2,6 +2,7 @@ package sii.challenge.repository.mysql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.LinkedList;
 import java.util.List;
 
 import sii.challenge.repository.UserDAO;
@@ -9,10 +10,10 @@ import sii.challenge.util.DataSource;
 
 public class UserDAOmysql implements UserDAO{
 	
-	private DataSource ds;
+	private DataSource dataSource;
 	
 	public UserDAOmysql(){
-		this.ds = new DataSource();
+		this.dataSource = new DataSource();
 	}
 
 	@Override
@@ -20,7 +21,7 @@ public class UserDAOmysql implements UserDAO{
 		Connection connection=this.dataSource.getConnection();
 		PreparedStatement statement =null;
 		String actor;
-		List<String> =new LinkedList<Fornitore>();
+		List<String> favoriteActor =new LinkedList<String>();
 		ResultSet risultato=null;
 		String query="select * from fornitori";
 
@@ -50,7 +51,7 @@ public class UserDAOmysql implements UserDAO{
 			catch(SQLException e){
 				throw new PersistenceException(e.getMessage());
 			}
-		}return ;
+		}return favoriteActor;
 	}
 
 	@Override
