@@ -1,10 +1,18 @@
 package sii.challenge;
 
+import java.util.List;
+
 import sii.challenge.domain.Movie;
 import sii.challenge.domain.User;
 
 public class ItemBasedPredictor implements IPredictor {
 
+
+	public ItemBasedPredictor(MovieRating[][] movieratingmatrix, List<User> users, List<Movie> movies)
+	{
+		
+	}
+	
 	@Override
 	public float PredictRating(User user, Movie movie, long timestamp) {
 		// TODO Auto-generated method stub
