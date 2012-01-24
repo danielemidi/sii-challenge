@@ -2,7 +2,6 @@ package sii.challenge.util;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 public class DataSource {
 	private String dbUri= "jdbc:mysql://localhost:3306/sii_challenge";
