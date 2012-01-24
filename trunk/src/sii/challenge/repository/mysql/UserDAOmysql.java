@@ -2,6 +2,8 @@ package sii.challenge.repository.mysql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,11 +19,11 @@ public class UserDAOmysql implements UserDAO{
 	}
 
 	@Override
-	public List<String> doRetriveFavoriteActors() {
+	public List<String> doRetriveFavoriteActors() throws Exception {
 		Connection connection=this.dataSource.getConnection();
 		PreparedStatement statement =null;
 		String actor;
-		List<String> favoriteActor =new LinkedList<String>();
+		List<String> favoriteActors =new LinkedList<String>();
 		ResultSet risultato=null;
 		String query="select * from fornitori";
 
@@ -30,17 +32,11 @@ public class UserDAOmysql implements UserDAO{
 			risultato=statement.executeQuery();
 
 			while(risultato.next()){
-				fornitore=new FornitoreProxy();
-				fornitore.setId(risultato.getInt("idf"));
-				fornitore.setCodice(risultato.getString("codicef"));
-				fornitore.setIndirizzo(risultato.getString("indirizzof"));
-				fornitore.setNome(risultato.getString("nomef"));
-				fornitore.setNtelefono(risultato.getString("ntelefono"));
-
-				.add(fornitore);
+				actor = risultato.getString("");
+				favoriteActors.add(actor);
 			}
 		}catch(SQLException e){
-			throw new PersistenceException(e.getMessage());
+			throw new Exception(e.getMessage());
 		}finally{
 			try{
 				if(statement!=null)
@@ -49,9 +45,9 @@ public class UserDAOmysql implements UserDAO{
 					connection.close();
 			}
 			catch(SQLException e){
-				throw new PersistenceException(e.getMessage());
+				throw new Exception(e.getMessage());
 			}
-		}return favoriteActor;
+		}return favoriteActors;
 	}
 
 	@Override
