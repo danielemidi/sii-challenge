@@ -27,13 +27,11 @@ public class Repository {
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		ResultSet result = null;
-		String query = "select COUNT(*) from (select distinct userid from user_ratedmovies)";
+		String query = "select count(distinct userid) from sii_challenge.user_ratedmovies";
 		int count = -1;
 
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(0, 0);
-			statement.setInt(0, 100);
 			result = statement.executeQuery();
 
 			while (result.next()){
@@ -64,8 +62,6 @@ public class Repository {
 
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(0, 0);
-			statement.setInt(0, 100);
 			result = statement.executeQuery();
 
 			while (result.next()){
@@ -108,8 +104,8 @@ public class Repository {
 		
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(0, startrowindex);
-			statement.setInt(0, ksetsize);
+			statement.setInt(1, startrowindex);
+			statement.setInt(2, ksetsize);
 			result = statement.executeQuery();
 
 			while (result.next()) {
@@ -160,8 +156,8 @@ public class Repository {
 		try {
 			// prendo i record precedenti al set i-esimo
 			statement = connection.prepareStatement(query);
-			statement.setInt(0, 0);
-			statement.setInt(0, ksetsize-1);
+			statement.setInt(1, 0);
+			statement.setInt(2, ksetsize-1);
 			result = statement.executeQuery();
 
 			while (result.next()) {
@@ -176,8 +172,8 @@ public class Repository {
 			
 			// prendo i record successivi al set i-esimo
 			statement = connection.prepareStatement(query);
-			statement.setInt(0, ithsetendingindex);
-			statement.setInt(0, count);
+			statement.setInt(1, ithsetendingindex);
+			statement.setInt(2, count);
 			result = statement.executeQuery();
 
 			while (result.next()) {

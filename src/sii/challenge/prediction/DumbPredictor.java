@@ -1,8 +1,5 @@
 package sii.challenge.prediction;
 
-import sii.challenge.domain.Movie;
-import sii.challenge.domain.User;
-
 public class DumbPredictor implements IPredictor {
 
 	@Override
