@@ -1,15 +1,12 @@
 package sii.challenge;
 
-import java.util.List;
-
-import sii.challenge.domain.Movie;
-import sii.challenge.domain.MovieRating;
+import sii.challenge.domain.*;
 import sii.challenge.domain.User;
 
 public class ItemBasedPredictor implements IPredictor {
 
 
-	public ItemBasedPredictor(MovieRating[][] movieratingmatrix, List<User> users, List<Movie> movies)
+	public ItemBasedPredictor(TrainingDataset trainingdataset)
 	{
 		
 	}

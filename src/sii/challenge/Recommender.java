@@ -16,9 +16,9 @@ import sii.challenge.domain.*;
  */
 public class Recommender {
 
-	private PreprocessedRecommendationDataset recommendationdataset;
+	private TrainingDataset recommendationdataset;
 	
-	public Recommender(PreprocessedRecommendationDataset recommendationdataset)
+	public Recommender(TrainingDataset recommendationdataset)
 	{
 		this.recommendationdataset = recommendationdataset;
 	}
