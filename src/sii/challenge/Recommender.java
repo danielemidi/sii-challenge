@@ -1,8 +1,10 @@
 package sii.challenge;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import sii.challenge.domain.*;
+import sii.challenge.prediction.*;
 
 /**
  * 
@@ -16,16 +18,28 @@ import sii.challenge.domain.*;
  */
 public class Recommender {
 
-	private TrainingDataset recommendationdataset;
+	private IPredictor predictor;
 	
 	public Recommender(TrainingDataset recommendationdataset)
 	{
-		this.recommendationdataset = recommendationdataset;
+		//this.predictor = new HybridPredictor(recommendationdataset);
+		this.predictor = new DumbPredictor();
 	}
 	
 	public List<MovieRating> recommend(List<MovieRating> input)
 	{
-		
+		List<MovieRating> ratings = new LinkedList<MovieRating>();
+		for(MovieRating mr : input)
+		{
+			MovieRating pmr = new MovieRating(
+					mr.getUserId(), 
+					mr.getMovieId(), 
+					mr.getTimestamp(), 
+					this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp())
+			);
+			ratings.add(pmr);
+		}
+		return ratings;
 	}
 	
 }

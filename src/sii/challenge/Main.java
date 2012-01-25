@@ -1,5 +1,7 @@
 package sii.challenge;
 
+import sii.challenge.testing.MAETester;
+
 /**
  * 
  * - riceve in input il file di Test e il nome del file di Output
@@ -13,7 +15,8 @@ package sii.challenge;
 public class Main {
 
 	public static void main(String[] args) {
-
+		MAETester maetester = new MAETester();
+		maetester.runTest();
 	}
 
 }

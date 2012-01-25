@@ -1,4 +1,4 @@
-package sii.challenge;
+package sii.challenge.prediction;
 
 import sii.challenge.domain.*;
 import sii.challenge.domain.User;
@@ -12,7 +12,7 @@ public class ItemBasedPredictor implements IPredictor {
 	}
 	
 	@Override
-	public float PredictRating(User user, Movie movie, long timestamp) {
+	public float PredictRating(int userid, int movieid, long timestamp) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

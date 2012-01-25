@@ -1,4 +1,4 @@
-package sii.challenge;
+package sii.challenge.prediction;
 
 import sii.challenge.domain.*;
 
@@ -11,23 +11,20 @@ public class HybridPredictor implements IPredictor {
 	private ItemBasedPredictor itembp;
 	
 	// farci passare matrice, lista user e lista movie e passarle agli oggetti che creo
-	public HybridPredictor(TrainingDataset trainingdataset) throws Exception
+	public HybridPredictor(TrainingDataset trainingdataset)
 	{
 		this.userbp = new UserBasedPredictor(trainingdataset);
 		this.itembp = new ItemBasedPredictor(trainingdataset);
 		
 		this.userbasedpredictionweight = .5F;
 		this.itembasedpredictionweight = .5F;
-		
-		if(this.userbasedpredictionweight+this.itembasedpredictionweight > 1)
-			throw new Exception("Invalid weights.");
 	}
 	
 	@Override
-	public float PredictRating(User user, Movie movie, long timestamp) {
+	public float PredictRating(int userid, int movieid, long timestamp) {
 		
-		return this.userbasedpredictionweight * this.userbp.PredictRating(user, movie, timestamp) + 
-			   this.itembasedpredictionweight * this.itembp.PredictRating(user, movie, timestamp);
+		return this.userbasedpredictionweight * this.userbp.PredictRating(userid, movieid, timestamp) + 
+			   this.itembasedpredictionweight * this.itembp.PredictRating(userid, movieid, timestamp);
 		
 	}
 

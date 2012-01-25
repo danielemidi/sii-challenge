@@ -1,8 +1,5 @@
 package sii.challenge.testing;
 
-import sii.challenge.domain.TrainingDataset;
-import sii.challenge.repository.Repository;
-
 /**
  * 
  * - ottiene i dati dal DB
@@ -12,12 +9,10 @@ import sii.challenge.repository.Repository;
  */
 public class MAETester {
 
-	public MAETester()
+	public void runTest()
 	{
-		TrainingDataset recommendationdataset = Repository.getPreprocessedRecommendationDataset();
-		
 		CrossValidator crossvalidator = new CrossValidator();
-		float mae = crossvalidator.runTest(recommendationdataset);
+		float mae = crossvalidator.runTest();
 		System.out.println("Cross Validator returned MAE " + mae);
 	}
 	
