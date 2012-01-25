@@ -1,7 +1,6 @@
 package sii.challenge.prediction;
 
 import sii.challenge.domain.*;
-import sii.challenge.domain.User;
 
 public class ItemBasedPredictor implements IPredictor {
 
