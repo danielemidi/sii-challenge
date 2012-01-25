@@ -1,5 +1,9 @@
 package sii.challenge;
 
+import java.util.List;
+
+import sii.challenge.domain.*;
+
 /**
  * 
  * - riceve in input Training set e Test set
@@ -12,6 +16,16 @@ package sii.challenge;
  */
 public class Recommender {
 
+	private PreprocessedRecommendationDataset recommendationdataset;
 	
+	public Recommender(PreprocessedRecommendationDataset recommendationdataset)
+	{
+		this.recommendationdataset = recommendationdataset;
+	}
+	
+	public List<MovieRating> recommend(List<MovieRating> input)
+	{
+		
+	}
 	
 }
