@@ -6,7 +6,7 @@ import java.sql.Connection;
 public class DataSource {
 	private String dbUri= "jdbc:mysql://localhost:3306/sii_challenge";
 	private String username="root";
-	private String password="antedesk";
+	private String password="root";
 
 	public Connection getConnection() throws Exception{
 		Connection connection = null;
