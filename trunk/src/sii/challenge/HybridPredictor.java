@@ -1,10 +1,6 @@
 package sii.challenge;
 
-import java.util.List;
-
-import sii.challenge.domain.Movie;
-import sii.challenge.domain.MovieRating;
-import sii.challenge.domain.User;
+import sii.challenge.domain.*;
 
 public class HybridPredictor implements IPredictor {
 
@@ -15,10 +11,10 @@ public class HybridPredictor implements IPredictor {
 	private ItemBasedPredictor itembp;
 	
 	// farci passare matrice, lista user e lista movie e passarle agli oggetti che creo
-	public HybridPredictor(MovieRating[][] movieratingmatrix, List<User> users, List<Movie> movies) throws Exception
+	public HybridPredictor(TrainingDataset trainingdataset) throws Exception
 	{
-		this.userbp = new UserBasedPredictor(movieratingmatrix, users, movies);
-		this.itembp = new ItemBasedPredictor(movieratingmatrix, users, movies);
+		this.userbp = new UserBasedPredictor(trainingdataset);
+		this.itembp = new ItemBasedPredictor(trainingdataset);
 		
 		this.userbasedpredictionweight = .5F;
 		this.itembasedpredictionweight = .5F;

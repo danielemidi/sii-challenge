@@ -1,11 +1,11 @@
 package sii.challenge.repository;
 
-import sii.challenge.domain.PreprocessedRecommendationDataset;
+import sii.challenge.domain.TrainingDataset;
 
 public class Repository {
 
 	
-	public static PreprocessedRecommendationDataset getPreprocessedRecommendationDataset(){
+	public static TrainingDataset getPreprocessedRecommendationDataset(){
 		
 		
 		return null;
