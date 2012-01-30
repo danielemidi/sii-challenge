@@ -1,5 +1,6 @@
 package sii.challenge;
 
+import sii.challenge.preprocessing.Preprocessor;
 import sii.challenge.testing.MAETester;
 
 /**
@@ -17,8 +18,14 @@ public class Main {
 	public static void main(String[] args) {
 		System.out.println("Starting Main...");
 		
-		MAETester maetester = new MAETester();
-		maetester.runTest();
+		//MAETester maetester = new MAETester();
+		//maetester.runTest();
+		Preprocessor preprocessor = new Preprocessor();
+		try {
+			preprocessor.preprocess();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
