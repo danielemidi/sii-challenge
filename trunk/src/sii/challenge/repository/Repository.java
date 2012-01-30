@@ -1,6 +1,5 @@
 package sii.challenge.repository;
 
-import java.awt.Window.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,9 +18,20 @@ public class Repository {
 	private int K;
 	private int CurrentSetIndex;
 	
+	private int UserCount = 0;
+	private int MovieRatingCount = 0;
+	
 	public Repository(int K)
 	{
 		this.dataSource = new DataSource();
+		
+		try {
+			this.UserCount = this.getUserCount();
+			this.MovieRatingCount = this.getMovieRatingCount();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		this.K = K;
 	}
 	
@@ -31,40 +41,7 @@ public class Repository {
 	}
 	
 	
-	public float getAverageUserRating(int userid) throws Exception {
-		return this.getSingleValue("select avg(rating) from sii_challenge.user_ratedmovies where userID=?", new int[]{userid});
-		/*Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		ResultSet result = null;
-		String query = "select avg(rating) from sii_challenge.user_ratedmovies where userID=?";
-		float avg = -1;
-
-		try {
-			statement = connection.prepareStatement(query);
-			statement.setInt(1, userid);
-			result = statement.executeQuery();
-
-			while (result.next()){
-				avg = result.getFloat(1);
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
-			}
-		}
-		
-		return avg;*/
-	}
-	
-	@SuppressWarnings("unchecked")
-	public float getSingleValue(String query, int[] args) throws Exception
+	public float getSingleFloatValue(String query, int[] args) throws Exception
 	{
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
@@ -73,6 +50,7 @@ public class Repository {
 
 		try {
 			statement = connection.prepareStatement(query);
+			for(int i = 0; i<args.length; i++) statement.setInt(i+1, args[i]);
 			result = statement.executeQuery();
 
 			while (result.next()){
@@ -100,7 +78,7 @@ public class Repository {
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
 		ResultSet result = null;
 
-		int count = this.getMovieRatingCount();
+		int count = this.MovieRatingCount;
 		int ksetsize = count / this.K;
 		int startrowindex = ksetsize*this.CurrentSetIndex - 1;
 		int ithsetendingindex = ksetsize*(this.CurrentSetIndex+1);
@@ -226,8 +204,10 @@ public class Repository {
 		ResultSet result = null;
 		String query = "select * from user_ratedmovies order by movieid limit ?, ?";
 
-		int ksetsize = this.getMovieRatingCount() / this.K;
+		int ksetsize = this.MovieRatingCount / this.K;
 		int startrowindex = ksetsize*this.CurrentSetIndex;
+		
+		System.out.println("REP - TestSet goes from " + startrowindex + " to " + (startrowindex+ksetsize) + ".");
 		
 		try {
 			statement = connection.prepareStatement(query);
@@ -274,8 +254,8 @@ public class Repository {
 		ResultSet result = null;
 		String query = "select * from user_ratedmovies order by movieid limit ?, ?";
 
-		int count = this.getMovieRatingCount();
-		int ksetsize = this.getMovieRatingCount() / this.K;
+		int count = this.MovieRatingCount;
+		int ksetsize = count / this.K;
 		int ithsetendingindex = ksetsize*(this.CurrentSetIndex+1);
 		
 		try {
@@ -325,7 +305,7 @@ public class Repository {
 		
 		// costruisce il trainingset
 		TrainingDataset trainingdataset = new TrainingDataset();
-		trainingdataset.setMovieratingmatrix(new RatingMatrix(count, this.getUserCount(), ratings));
+		trainingdataset.setMovieratingmatrix(new RatingMatrix(count, this.UserCount, ratings));
 		
 		return trainingdataset;
 	}
