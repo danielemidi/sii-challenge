@@ -14,7 +14,7 @@ public class HybridPredictor implements IPredictor {
 	public HybridPredictor(TrainingDataset trainingdataset)
 	{
 		this.userbp = new UserBasedPredictor(trainingdataset);
-		this.itembp = new ItemBasedPredictor(trainingdataset);
+		//this.itembp = new ItemBasedPredictor(trainingdataset);
 		
 		this.userbasedpredictionweight = .5F;
 		this.itembasedpredictionweight = .5F;
