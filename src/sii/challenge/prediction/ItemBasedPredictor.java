@@ -5,6 +5,12 @@ import java.util.List;
 import sii.challenge.domain.MovieRating;
 import sii.challenge.repository.Repository;
 
+/**
+ * 
+ * Come predizione usa la media dei voti dati dall'utente UserID ai TopN (100) Movies più simili a MovieID.
+ * La similarità fra Movies è precalcolata in base ai valori statici posseduti, quali corrispondenze di attori, registi, generi, general ratings, ...
+ *
+ */
 public class ItemBasedPredictor implements IPredictor {
 
 	private final Repository repository;
@@ -33,7 +39,7 @@ public class ItemBasedPredictor implements IPredictor {
 			return 0;
 		}
 		
-		return timestamp;
+		return p;
 	}
 
 }

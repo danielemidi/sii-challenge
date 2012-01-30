@@ -19,7 +19,7 @@ import sii.challenge.repository.Repository;
  */
 public class CrossValidator {
 
-	public final int K = 100;
+	public final int K = 500;
 	
 	public float runTest()
 	{
@@ -41,6 +41,9 @@ public class CrossValidator {
 				System.out.println("CV - MAE of iteration " + i + ": " + mae);
 				
 				totalmae += mae;
+				System.out.println("CV - Global MAE (partial, after iteration " + i + "): " + (totalmae/(i+1)));
+				System.out.print("PRESS ENTER TO CONTINUE...");
+				System.in.read();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
