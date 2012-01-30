@@ -12,6 +12,8 @@ public class MAETester {
 	public void runTest()
 	{
 		CrossValidator crossvalidator = new CrossValidator();
+		
+		System.out.println("Starting CrossValidation...");
 		float mae = crossvalidator.runTest();
 		System.out.println("Cross Validator returned MAE " + mae);
 	}

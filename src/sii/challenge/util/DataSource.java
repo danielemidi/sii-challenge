@@ -13,9 +13,7 @@ public class DataSource {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 		      connection = DriverManager.getConnection(dbUri, username, password);
-		      if(!connection.isClosed())
-		          System.out.println("Successfully connected to " +
-		            "MySQL server using TCP/IP...");
+		      //if(!connection.isClosed()) System.out.println("Successfully connected to MySQL server using TCP/IP...");
 
 		      } catch(Exception e) {
 		        System.err.println("Exception: " + e.getMessage());

@@ -19,21 +19,26 @@ import sii.challenge.repository.Repository;
  */
 public class CrossValidator {
 
-	public final int K = 3;
+	public final int K = 100;
 	
 	public float runTest()
 	{
 		float totalmae = 0;
-		Repository repository = new Repository();
+		System.out.println("CV - Creating Repository...");
+		Repository repository = new Repository(K);
 		
 		for(int i = 0; i < K; i++) {
 			try {
-				Recommender recommender = new Recommender(repository.getTrainingSet(K, i));
-				List<MovieRating> testset = repository.getTestSet(K, i);
+				System.out.println("CV - Current i = " + i + "...");
+				repository.setCurrentSetIndex(i);
+				Recommender recommender = new Recommender(repository);
+				System.out.println("CV - Loading testset...");
+				List<MovieRating> testset = repository.getTestSet();
 				List<MovieRating> predictions = recommender.recommend(testset);
-				
+
+				System.out.println("CV - Calculating MAE...");
 				float mae = this.calculateMAE(testset, predictions);
-				System.out.println("MAE of iteration " + i + ": " + mae);
+				System.out.println("CV - MAE of iteration " + i + ": " + mae);
 				
 				totalmae += mae;
 			} catch (Exception e) {

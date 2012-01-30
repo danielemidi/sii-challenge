@@ -1,5 +1,6 @@
 package sii.challenge.repository;
 
+import java.awt.Window.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,11 +16,86 @@ import sii.challenge.util.DataSource;
 public class Repository {
 
 	private DataSource dataSource;
+	private int K;
+	private int CurrentSetIndex;
 	
-	public Repository()
+	public Repository(int K)
 	{
 		this.dataSource = new DataSource();
+		this.K = K;
 	}
+	
+	public void setCurrentSetIndex(int index)
+	{
+		this.CurrentSetIndex = index;
+	}
+	
+	
+	public float getAverageUserRating(int userid) throws Exception {
+		//return (float)this.getSingleValue("select avg(rating) from sii_challenge.user_ratedmovies where userID=?", new int[]{userid});
+		Connection connection = this.dataSource.getConnection();
+		PreparedStatement statement = null;
+		ResultSet result = null;
+		String query = "select avg(rating) from sii_challenge.user_ratedmovies where userID=?";
+		float avg = -1;
+
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, userid);
+			result = statement.executeQuery();
+
+			while (result.next()){
+				avg = result.getFloat(1);
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+		
+		return avg;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getSingleValue(String query, int[] args) throws Exception
+	{
+		Connection connection = this.dataSource.getConnection();
+		PreparedStatement statement = null;
+		ResultSet result = null;
+		T res = null;
+
+		try {
+			statement = connection.prepareStatement(query);
+			for(int i = 0; i<args.length; i++) statement.setInt(i+1, args[i]);
+			result = statement.executeQuery();
+
+			while (result.next()){
+				res = (T)result.getObject(1);
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+		
+		return res;
+	}
+	
+	
 	
 
 	public int getUserCount() throws Exception
@@ -92,15 +168,15 @@ public class Repository {
 	 * @return
 	 * @throws Exception 
 	 */
-	public List<MovieRating> getTestSet(int k, int i) throws Exception {
+	public List<MovieRating> getTestSet() throws Exception {
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
 		ResultSet result = null;
 		String query = "select * from user_ratedmovies order by movieid limit ?, ?";
 
-		int ksetsize = this.getMovieRatingCount() / k;
-		int startrowindex = ksetsize*i;
+		int ksetsize = this.getMovieRatingCount() / this.K;
+		int startrowindex = ksetsize*this.CurrentSetIndex;
 		
 		try {
 			statement = connection.prepareStatement(query);
@@ -137,12 +213,10 @@ public class Repository {
 	
 	/**
 	 * Restituisce un Training Set costruito considerando tutti i K-1 set della tabella degli UserRatings (divisa in K set), tranne l'i-esimo.
-	 * @param k
-	 * @param i
 	 * @return
 	 * @throws Exception 
 	 */
-	public TrainingDataset getTrainingSet(int k, int i) throws Exception {
+	public TrainingDataset getTrainingSet() throws Exception {
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
@@ -150,8 +224,8 @@ public class Repository {
 		String query = "select * from user_ratedmovies order by movieid limit ?, ?";
 
 		int count = this.getMovieRatingCount();
-		int ksetsize = this.getMovieRatingCount() / k;
-		int ithsetendingindex = ksetsize*(i+1);
+		int ksetsize = this.getMovieRatingCount() / this.K;
+		int ithsetendingindex = ksetsize*(this.CurrentSetIndex+1);
 		
 		try {
 			// prendo i record precedenti al set i-esimo
