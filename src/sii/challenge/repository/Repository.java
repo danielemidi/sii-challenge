@@ -32,8 +32,8 @@ public class Repository {
 	
 	
 	public float getAverageUserRating(int userid) throws Exception {
-		//return (float)this.getSingleValue("select avg(rating) from sii_challenge.user_ratedmovies where userID=?", new int[]{userid});
-		Connection connection = this.dataSource.getConnection();
+		return this.getSingleValue("select avg(rating) from sii_challenge.user_ratedmovies where userID=?", new int[]{userid});
+		/*Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		ResultSet result = null;
 		String query = "select avg(rating) from sii_challenge.user_ratedmovies where userID=?";
@@ -60,24 +60,23 @@ public class Repository {
 			}
 		}
 		
-		return avg;
+		return avg;*/
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> T getSingleValue(String query, int[] args) throws Exception
+	public float getSingleValue(String query, int[] args) throws Exception
 	{
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		ResultSet result = null;
-		T res = null;
+		float res = 0;
 
 		try {
 			statement = connection.prepareStatement(query);
-			for(int i = 0; i<args.length; i++) statement.setInt(i+1, args[i]);
 			result = statement.executeQuery();
 
 			while (result.next()){
-				res = (T)result.getObject(1);
+				res = result.getFloat(1);
 			}
 		} catch (SQLException e) {
 			throw new Exception(e.getMessage());
@@ -94,6 +93,58 @@ public class Repository {
 		
 		return res;
 	}
+	
+	public List<MovieRating> getMovieRatingList(String query, int[] args) throws Exception {
+		Connection connection = this.dataSource.getConnection();
+		PreparedStatement statement = null;
+		List<MovieRating> ratings = new LinkedList<MovieRating>();
+		ResultSet result = null;
+
+		int count = this.getMovieRatingCount();
+		int ksetsize = count / this.K;
+		int startrowindex = ksetsize*this.CurrentSetIndex - 1;
+		int ithsetendingindex = ksetsize*(this.CurrentSetIndex+1);
+		
+		String kview = "((SELECT * FROM user_ratedmovies LIMIT 0, "+startrowindex+") UNION (SELECT * FROM user_ratedmovies LIMIT "+ithsetendingindex+", "+count+"))";
+		query = query.replaceAll("user_ratedmoview", kview);
+		
+		try {
+			statement = connection.prepareStatement(query);
+			for(int i = 0; i<args.length; i++) statement.setInt(i+1, args[i]);
+			result = statement.executeQuery();
+
+			while (result.next()) {
+				MovieRating rating = new MovieRating(
+						result.getInt("userID"),
+						result.getInt("movieID"),
+						result.getLong("timestamp"),
+						result.getFloat("rating")
+				);
+				ratings.add(rating);
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+		
+		return ratings;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

@@ -1,19 +1,39 @@
 package sii.challenge.prediction;
 
-import sii.challenge.domain.*;
+import java.util.List;
+
+import sii.challenge.domain.MovieRating;
+import sii.challenge.repository.Repository;
 
 public class ItemBasedPredictor implements IPredictor {
 
-
-	public ItemBasedPredictor(TrainingDataset trainingdataset)
+	private final Repository repository;
+	
+	public ItemBasedPredictor(Repository repository)
 	{
-		
+		this.repository = repository;
 	}
 	
 	@Override
 	public float PredictRating(int userid, int movieid, long timestamp) {
-		// TODO Auto-generated method stub
-		return 0;
+		float p = 0;
+		try {
+			List<MovieRating> ratings = this.repository.getMovieRatingList(
+					"SELECT URM.userID, URM.movieID, URM.timestamp, URM.rating FROM " +
+					"(SELECT * FROM user_ratedmovies WHERE userID=?) URM " +
+					"JOIN " +
+					"(SELECT iditem2 FROM item_static_similarities WHERE iditem1=? ORDER BY similarity ASC LIMIT 100) ISS " +
+					"ON URM.movieID=ISS.iditem2", 
+					new int[]{ userid, movieid } );
+						
+			for(MovieRating mr : ratings) p+=mr.getRating();
+			p/=ratings.size();
+			
+		} catch (Exception e) {
+			return 0;
+		}
+		
+		return timestamp;
 	}
 
 }
