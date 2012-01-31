@@ -1,6 +1,6 @@
 package sii.challenge.prediction;
 
-import sii.challenge.repository.Repository;
+import sii.challenge.repository.KSetRepository;
 
 /**
  * Predictor che fa la media dei voti dell'utente UserID per tutti i movie che ha votato
@@ -9,9 +9,9 @@ import sii.challenge.repository.Repository;
  */
 public class DumbUserPredictor implements IPredictor {
 
-	private final Repository repository;
+	private final KSetRepository repository;
 	
-	public DumbUserPredictor(Repository repository)
+	public DumbUserPredictor(KSetRepository repository)
 	{
 		this.repository = repository;
 	}

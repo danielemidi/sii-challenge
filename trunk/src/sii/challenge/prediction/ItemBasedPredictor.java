@@ -3,7 +3,7 @@ package sii.challenge.prediction;
 import java.util.List;
 
 import sii.challenge.domain.MovieRating;
-import sii.challenge.repository.Repository;
+import sii.challenge.repository.KSetRepository;
 
 /**
  * 
@@ -13,9 +13,9 @@ import sii.challenge.repository.Repository;
  */
 public class ItemBasedPredictor implements IPredictor {
 
-	private final Repository repository;
+	private final KSetRepository repository;
 	
-	public ItemBasedPredictor(Repository repository)
+	public ItemBasedPredictor(KSetRepository repository)
 	{
 		this.repository = repository;
 	}

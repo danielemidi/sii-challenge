@@ -4,7 +4,7 @@ import java.util.List;
 
 import sii.challenge.Recommender;
 import sii.challenge.domain.*;
-import sii.challenge.repository.Repository;
+import sii.challenge.repository.KSetRepository;
 
 /** 
  * 
@@ -25,7 +25,7 @@ public class CrossValidator {
 	{
 		float totalmae = 0;
 		System.out.println("CV - Creating Repository...");
-		Repository repository = new Repository(K);
+		KSetRepository repository = new KSetRepository(K);
 		
 		for(int i = 0; i < K; i++) {
 			try {
