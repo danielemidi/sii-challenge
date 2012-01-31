@@ -5,7 +5,7 @@ import java.util.List;
 
 import sii.challenge.domain.*;
 import sii.challenge.prediction.*;
-import sii.challenge.repository.Repository;
+import sii.challenge.repository.KSetRepository;
 
 /**
  * 
@@ -21,7 +21,7 @@ public class Recommender {
 
 	private IPredictor predictor;
 	
-	public Recommender(Repository repository)
+	public Recommender(KSetRepository repository)
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		//this.predictor = new DumbPredictor();
