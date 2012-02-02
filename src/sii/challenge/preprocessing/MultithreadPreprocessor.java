@@ -34,6 +34,10 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		List<Integer> movieids = this.getMovieIDs();
 		
 		int firstID1todo = (int) super.repository.getSingleFloatValue("SELECT iditem1 FROM item_static_similarities GROUP BY iditem1 HAVING iditem1 % ? = ? AND COUNT(iditem2)<10197 LIMIT 1", new int[]{this.tot, this.mod});
+		if(firstID1todo==0)
+		{
+			firstID1todo = ((int)super.repository.getSingleFloatValue("SELECT MAX(iditem1) FROM item_static_similarities GROUP BY iditem1 HAVING iditem1 % ? = ? AND COUNT(iditem2)=10197", new int[]{this.tot, this.mod})) + 1;
+		}
 		int firstID2todo = (int) super.repository.getSingleFloatValue("SELECT MAX(iditem2) FROM item_static_similarities WHERE iditem1=?", new int[]{firstID1todo});
 		
 		for(int id1 : movieids)
@@ -42,7 +46,7 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 			{
 				for(int id2 : movieids)
 				{
-					if(id2>=firstID2todo) 
+					if(id2>firstID2todo) 
 					{
 						float actorsincommon = this.getStuffInCommon("movie_actors", "actorID", id1, id2);
 						float directorsincommon = this.getStuffInCommon("movie_directors", "directorID", id1, id2);
