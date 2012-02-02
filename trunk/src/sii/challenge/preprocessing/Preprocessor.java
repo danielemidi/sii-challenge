@@ -13,7 +13,7 @@ import sii.challenge.util.DataSource;
 public class Preprocessor {
 
 	protected DataSource dataSource;
-	private Repository repository;
+	protected Repository repository;
 	
 	public Preprocessor()
 	{

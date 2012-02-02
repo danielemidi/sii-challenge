@@ -22,17 +22,23 @@ public class Main {
 		//MAETester maetester = new MAETester();
 		//maetester.runTest();
 		
-		/*(new Thread(new MultithreadPreprocessor(0, 4))).start();
-		(new Thread(new MultithreadPreprocessor(1, 4))).start();
-		(new Thread(new MultithreadPreprocessor(2, 4))).start();
-		(new Thread(new MultithreadPreprocessor(3, 4))).start();*/
+		(new Thread(new MultithreadPreprocessor(0, 10))).start();
+		(new Thread(new MultithreadPreprocessor(1, 10))).start();
+		(new Thread(new MultithreadPreprocessor(2, 10))).start();
+		(new Thread(new MultithreadPreprocessor(3, 10))).start();
+		(new Thread(new MultithreadPreprocessor(4, 10))).start();
+		(new Thread(new MultithreadPreprocessor(5, 10))).start();
+		(new Thread(new MultithreadPreprocessor(6, 10))).start();
+		(new Thread(new MultithreadPreprocessor(7, 10))).start();
+		(new Thread(new MultithreadPreprocessor(8, 10))).start();
+		(new Thread(new MultithreadPreprocessor(9, 10))).start();
 		
-		Preprocessor preprocessor = new Preprocessor();
+		/*Preprocessor preprocessor = new Preprocessor();
 		try {
 			preprocessor.preprocess();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 }
