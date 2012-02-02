@@ -12,7 +12,7 @@ import sii.challenge.util.DataSource;
 
 public class Preprocessor {
 
-	private DataSource dataSource;
+	protected DataSource dataSource;
 	private Repository repository;
 	
 	public Preprocessor()
@@ -34,66 +34,71 @@ public class Preprocessor {
 		List<Integer> movieids = this.getMovieIDs();
 		
 		for(int id1 : movieids)
-			for(int id2 : movieids)
-			{
-				float actorsincommon = this.getStuffInCommon("movie_actors", "actorID", id1, id2);
-				float directorsincommon = this.getStuffInCommon("movie_directors", "directorID", id1, id2);
-				float genresincommon = this.getStuffInCommon("movie_genres", "genre", id1, id2);
-				float countriesincommon = this.getStuffInCommon("movie_countries", "country", id1, id2);
-				float tagsincommon = this.getWeightedStuffInCommon("movie_tags", "tagID", "normalizedTagWeight", id1, id2);
-				float allcriticsscorediscrepance = this.getDiscrepance("movies", "rtAllCriticsScore", 100, id1, id2);
-				float topcriticsscorediscrepance = this.getDiscrepance("movies", "rtTopCriticsScore", 100, id1, id2);
-				float audiencescorediscrepance = this.getDiscrepance("movies", "rtAudienceScore", 100, id1, id2);
-				float decadediscrepance = this.getDecadeDiscrepance(id1, id2);
-				float similarity = 
-						actorsincommon * 6 + 
-						directorsincommon * 3 + 
-						genresincommon * 9 + 
-						countriesincommon * 3 + 
-						tagsincommon * 5 +
-						allcriticsscorediscrepance * 5 + 
-						topcriticsscorediscrepance * 5 + 
-						audiencescorediscrepance * 5 + 
-						decadediscrepance * 5;
-				similarity /= 46;
-				
-				System.out.println(id1+"\t"+id2+"\t"+actorsincommon+"\t"+directorsincommon+"\t"+genresincommon+"\t"+countriesincommon+"\t"+tagsincommon+"\t"+allcriticsscorediscrepance+"\t"+topcriticsscorediscrepance+"\t"+audiencescorediscrepance+"\t"+decadediscrepance+"\t\t"+similarity);
-				
-				Connection connection = this.dataSource.getConnection();
-				PreparedStatement statement = null;
-				String query = "INSERT INTO item_static_similarities (iditem1, iditem2, actors, directors, genres, countries, tags, allcriticsscore, topcriticsscore, audiencescore, decadediscrepance, similarity) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-				
-				try {
+		{
+			if(id1>39) {
+				for(int id2 : movieids)
+				{
+					float actorsincommon = this.getStuffInCommon("movie_actors", "actorID", id1, id2);
+					float directorsincommon = this.getStuffInCommon("movie_directors", "directorID", id1, id2);
+					float genresincommon = this.getStuffInCommon("movie_genres", "genre", id1, id2);
+					float countriesincommon = this.getStuffInCommon("movie_countries", "country", id1, id2);
+					float tagsincommon = this.getWeightedStuffInCommon("movie_tags", "tagID", "normalizedTagWeight", id1, id2);
+					float allcriticsscorediscrepance = this.getDiscrepance("movies", "rtAllCriticsScore", 100, id1, id2);
+					float topcriticsscorediscrepance = this.getDiscrepance("movies", "rtTopCriticsScore", 100, id1, id2);
+					float audiencescorediscrepance = this.getDiscrepance("movies", "rtAudienceScore", 100, id1, id2);
+					float decadediscrepance = this.getDecadeDiscrepance(id1, id2);
+					float similarity = 
+							actorsincommon * 6 + 
+							directorsincommon * 3 + 
+							genresincommon * 9 + 
+							countriesincommon * 3 + 
+							tagsincommon * 5 +
+							allcriticsscorediscrepance * 5 + 
+							topcriticsscorediscrepance * 5 + 
+							audiencescorediscrepance * 5 + 
+							decadediscrepance * 5;
+					similarity /= 46;
 					
-					statement = connection.prepareStatement(query);
-					statement.setInt(1, id1);
-					statement.setInt(2, id2);
-					statement.setFloat(3, actorsincommon);
-					statement.setFloat(4, directorsincommon);
-					statement.setFloat(5, genresincommon);
-					statement.setFloat(6, countriesincommon);
-					statement.setFloat(7, tagsincommon);
-					statement.setFloat(8, genresincommon);
-					statement.setFloat(9, allcriticsscorediscrepance);
-					statement.setFloat(10, audiencescorediscrepance);
-					statement.setFloat(11, similarity);
-					//statement.executeUpdate();
+					System.out.println(id1+"\t"+id2+"\t"+actorsincommon+"\t"+directorsincommon+"\t"+genresincommon+"\t"+countriesincommon+"\t"+tagsincommon+"\t"+allcriticsscorediscrepance+"\t"+topcriticsscorediscrepance+"\t"+audiencescorediscrepance+"\t"+decadediscrepance+"\t\t"+similarity);
 					
-				} catch (SQLException e) {
-					throw new Exception(e.getMessage());
-				} finally {
+					Connection connection = this.dataSource.getConnection();
+					PreparedStatement statement = null;
+					String query = "INSERT INTO item_static_similarities (iditem1, iditem2, actors, directors, genres, countries, tags, allcriticsscore, topcriticsscore, audiencescore, decadediscrepance, similarity) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+					
 					try {
-						if (statement != null) statement.close();
-						if (connection != null) connection.close();
+						
+						statement = connection.prepareStatement(query);
+						statement.setInt(1, id1);
+						statement.setInt(2, id2);
+						statement.setFloat(3, actorsincommon);
+						statement.setFloat(4, directorsincommon);
+						statement.setFloat(5, genresincommon);
+						statement.setFloat(6, countriesincommon);
+						statement.setFloat(7, tagsincommon);
+						statement.setFloat(8, allcriticsscorediscrepance);
+						statement.setFloat(9, topcriticsscorediscrepance);
+						statement.setFloat(10, audiencescorediscrepance);
+						statement.setFloat(11, decadediscrepance);
+						statement.setFloat(12, similarity);
+						statement.executeUpdate();
+						
 					} catch (SQLException e) {
 						throw new Exception(e.getMessage());
+					} finally {
+						try {
+							if (statement != null) statement.close();
+							if (connection != null) connection.close();
+						} catch (SQLException e) {
+							throw new Exception(e.getMessage());
+						}
 					}
 				}
 			}
+		}
 	}
 	
 	
-	private List<Integer> getMovieIDs() throws Exception
+	protected List<Integer> getMovieIDs() throws Exception
 	{
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
@@ -125,7 +130,7 @@ public class Preprocessor {
 	}
 	
 	
-	private float getStuffInCommon(String tablename, String idcolname, int idmovie1, int idmovie2) throws Exception
+	protected float getStuffInCommon(String tablename, String idcolname, int idmovie1, int idmovie2) throws Exception
 	{
 
 		String query = "SELECT incommon/total as perc FROM " +
@@ -141,7 +146,7 @@ public class Preprocessor {
 
 	
 	
-	private float getWeightedStuffInCommon(String tablename, String idcolname, String weightcolname, int idmovie1, int idmovie2) throws Exception
+	protected float getWeightedStuffInCommon(String tablename, String idcolname, String weightcolname, int idmovie1, int idmovie2) throws Exception
 	{
 		String query = "SELECT incommon/total as perc FROM " +
 				       "(SELECT SUM(1-ABS(A1."+weightcolname+"-A2."+weightcolname+")) as incommon " +
@@ -156,7 +161,7 @@ public class Preprocessor {
 	}
 	
 	
-	private float getDiscrepance(String tablename, String colname, int normalizationfactor, int idmovie1, int idmovie2) throws Exception
+	protected float getDiscrepance(String tablename, String colname, int normalizationfactor, int idmovie1, int idmovie2) throws Exception
 	{
 
 		String query = "SELECT 1-ABS((A1."+colname+" - A2."+colname+")/"+normalizationfactor+") as perc " +
@@ -167,7 +172,7 @@ public class Preprocessor {
 	}
 	
 	
-	private float getDecadeDiscrepance(int idmovie1, int idmovie2) throws Exception
+	protected float getDecadeDiscrepance(int idmovie1, int idmovie2) throws Exception
 	{
 		String query = "SELECT 1-(ABS(FLOOR(A1.year/10) - FLOOR(A2.year/10))/10) as y " +
 				   	   "FROM movies A1, movies A2 " +

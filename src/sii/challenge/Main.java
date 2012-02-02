@@ -1,5 +1,6 @@
 package sii.challenge;
 
+import sii.challenge.preprocessing.MultithreadPreprocessor;
 import sii.challenge.preprocessing.Preprocessor;
 import sii.challenge.testing.MAETester;
 
@@ -20,6 +21,12 @@ public class Main {
 		
 		//MAETester maetester = new MAETester();
 		//maetester.runTest();
+		
+		/*(new Thread(new MultithreadPreprocessor(0, 4))).start();
+		(new Thread(new MultithreadPreprocessor(1, 4))).start();
+		(new Thread(new MultithreadPreprocessor(2, 4))).start();
+		(new Thread(new MultithreadPreprocessor(3, 4))).start();*/
+		
 		Preprocessor preprocessor = new Preprocessor();
 		try {
 			preprocessor.preprocess();
