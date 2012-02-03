@@ -25,12 +25,12 @@ public class ItemBasedPredictor implements IPredictor {
 		float p = 0;
 		try {
 			p = this.repository.getSingleFloatValue(
-				"SELECT SUM(URM.rating * ISS.similarity)/SUM(ISS.similarity) FROM " +
+				"SELECT SUM(URM.rating * (ISS.similarity*1/ABS(?-URM.timestamp)))/SUM(ISS.similarity*1/ABS(?-URM.timestamp)) FROM " +
 				"(SELECT * FROM user_ratedmovies WHERE userID=?) URM " +
 				"JOIN " +
 				"(SELECT iditem2, similarity FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
 				"ON URM.movieID=ISS.iditem2", 
-				new int[]{ userid, movieid } );
+				new long[]{ timestamp, timestamp, userid, movieid } );
 			
 		} catch (Exception e) {
 			return 0;
