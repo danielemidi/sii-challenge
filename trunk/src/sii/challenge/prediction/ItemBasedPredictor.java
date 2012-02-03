@@ -7,7 +7,7 @@ import sii.challenge.repository.KSetRepository;
 
 /**
  * 
- * Come predizione usa la media dei voti dati dall'utente UserID ai TopN (100) Movies più simili a MovieID.
+ * Come predizione usa la media pesata dei voti dati dall'utente UserID ai TopN (100) Movies più simili a MovieID.
  * La similarità fra Movies è precalcolata in base ai valori statici posseduti, quali corrispondenze di attori, registi, generi, general ratings, ...
  *
  */
@@ -24,22 +24,11 @@ public class ItemBasedPredictor implements IPredictor {
 	public float PredictRating(int userid, int movieid, long timestamp) {
 		float p = 0;
 		try {
-			/*List<MovieRating> ratings = this.repository.getMovieRatingList(
-					"SELECT URM.userID, URM.movieID, URM.timestamp, URM.rating FROM " +
-					"(SELECT * FROM user_ratedmovies WHERE userID=?) URM " +
-					"JOIN " +
-					"(SELECT iditem2 FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
-					"ON URM.movieID=ISS.iditem2", 
-					new int[]{ userid, movieid } );
-						
-			for(MovieRating mr : ratings) p+=mr.getRating();
-			p/=ratings.size();*/
-			
 			p = this.repository.getSingleFloatValue(
 				"SELECT SUM(URM.rating * ISS.similarity)/SUM(ISS.similarity) FROM " +
 				"(SELECT * FROM user_ratedmovies WHERE userID=?) URM " +
 				"JOIN " +
-				"(SELECT iditem2 FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
+				"(SELECT iditem2, similarity FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
 				"ON URM.movieID=ISS.iditem2", 
 				new int[]{ userid, movieid } );
 			
