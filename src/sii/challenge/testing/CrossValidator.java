@@ -1,5 +1,8 @@
 package sii.challenge.testing;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import sii.challenge.Recommender;
@@ -27,9 +30,16 @@ public class CrossValidator {
 		System.out.println("CV - Creating Repository...");
 		KSetRepository repository = new KSetRepository(K);
 		
-		for(int i = 0; i < K; i++) {
+		List<Integer> indexes = new ArrayList<Integer>(K);
+		for(int i = 0; i < K; i++) indexes.add(i);
+		
+		Collections.shuffle(indexes);
+		
+		int c = 1;
+		for(int i : indexes)
+		{
 			try {
-				System.out.println("CV - Current i = " + i + "...");
+				System.out.println("CV - Current testset index = " + i + "...");
 				repository.setCurrentSetIndex(i);
 				Recommender recommender = new Recommender(repository);
 				System.out.println("CV - Loading testset...");
@@ -38,15 +48,17 @@ public class CrossValidator {
 
 				System.out.println("CV - Calculating MAE...");
 				float mae = this.calculateMAE(testset, predictions);
-				System.out.println("CV - MAE of iteration " + i + ": " + mae);
+				System.out.println("CV - MAE of iteration " + c + ": " + mae);
 				
 				totalmae += mae;
-				System.out.println("CV - Global MAE (partial, after iteration " + i + "): " + (totalmae/(i+1)));
+				System.out.println("CV - Global MAE (partial, after iteration " + c + "): " + (totalmae/(c)));
 				System.out.print("PRESS ENTER TO CONTINUE...");
 				System.in.read();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			c++;
 		}
 		
 		totalmae /= K;

@@ -71,6 +71,36 @@ public class KSetRepository {
 		
 		return res;
 	}
+	public float getSingleFloatValue(String query, long[] args) throws Exception
+	{
+		Connection connection = this.dataSource.getConnection();
+		PreparedStatement statement = null;
+		ResultSet result = null;
+		float res = 0;
+
+		try {
+			statement = connection.prepareStatement(query);
+			for(int i = 0; i<args.length; i++) statement.setLong(i+1, args[i]);
+			result = statement.executeQuery();
+
+			while (result.next()){
+				res = result.getFloat(1);
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			try {
+				if (statement != null)
+					statement.close();
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+		
+		return res;
+	}
 	
 	public List<MovieRating> getMovieRatingList(String query, int[] args) throws Exception {
 		Connection connection = this.dataSource.getConnection();
