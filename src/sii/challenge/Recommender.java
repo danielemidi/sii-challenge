@@ -25,7 +25,8 @@ public class Recommender {
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		//this.predictor = new DumbPredictor();
-		this.predictor = new DumbUserPredictor(repository);
+		//this.predictor = new DumbUserPredictor(repository);
+		this.predictor = new ItemBasedPredictor(repository);
 	}
 	
 	public List<MovieRating> recommend(List<MovieRating> input)
