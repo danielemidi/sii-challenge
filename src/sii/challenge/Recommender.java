@@ -20,6 +20,7 @@ import sii.challenge.repository.KSetRepository;
 public class Recommender {
 
 	private IPredictor predictor;
+	private IPredictor fallbackpredictor;
 	
 	public Recommender(KSetRepository repository)
 	{
@@ -27,6 +28,7 @@ public class Recommender {
 		//this.predictor = new DumbPredictor();
 		//this.predictor = new DumbUserPredictor(repository);
 		this.predictor = new ItemBasedPredictor(repository);
+		this.fallbackpredictor = new DumbUserPredictor(repository);
 	}
 	
 	public List<MovieRating> recommend(List<MovieRating> input)
@@ -37,11 +39,13 @@ public class Recommender {
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
 		for(MovieRating mr : input)
 		{
+			float p = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+			if(p==0) p = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
 			MovieRating pmr = new MovieRating(
 					mr.getUserId(), 
 					mr.getMovieId(), 
 					mr.getTimestamp(), 
-					this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp())
+					p
 			);
 			ratings.add(pmr);
 			if (mr.getRating() > 0) {
