@@ -28,9 +28,8 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 	
 	public void preprocessItemStaticSimilarity() throws Exception
 	{
-		System.out.println("ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
+		System.out.println("["+this.mod+"] ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
 		
-		int i = 0;
 		List<Integer> movieids = this.getMovieIDs();
 		
 		int firstID1todo = (int) super.repository.getSingleFloatValue("SELECT iditem1 FROM item_static_similarities GROUP BY iditem1 HAVING iditem1 % ? = ? AND COUNT(iditem2)<10197 LIMIT 1", new int[]{this.tot, this.mod});
@@ -69,7 +68,7 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 								decadediscrepance * 5;
 						similarity /= 46;
 						
-						System.out.println(id1+"\t"+id2+"\t"+actorsincommon+"\t"+directorsincommon+"\t"+genresincommon+"\t"+countriesincommon+"\t"+tagsincommon+"\t"+allcriticsscorediscrepance+"\t"+topcriticsscorediscrepance+"\t"+audiencescorediscrepance+"\t"+decadediscrepance+"\t\t"+similarity);
+						System.out.println("["+this.mod+"] " + id1+"\t"+id2+"\t"+actorsincommon+"\t"+directorsincommon+"\t"+genresincommon+"\t"+countriesincommon+"\t"+tagsincommon+"\t"+allcriticsscorediscrepance+"\t"+topcriticsscorediscrepance+"\t"+audiencescorediscrepance+"\t"+decadediscrepance+"\t\t"+similarity);
 						
 						Connection connection = this.dataSource.getConnection();
 						PreparedStatement statement = null;
