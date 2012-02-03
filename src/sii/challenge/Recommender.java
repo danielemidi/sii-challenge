@@ -45,7 +45,7 @@ public class Recommender {
 					mr.getUserId(), 
 					mr.getMovieId(), 
 					mr.getTimestamp(), 
-					p
+					.5F*Math.round(p/.5)
 			);
 			ratings.add(pmr);
 			if (mr.getRating() > 0) {
