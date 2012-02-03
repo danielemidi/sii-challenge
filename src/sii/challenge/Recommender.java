@@ -26,7 +26,6 @@ public class Recommender {
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		//this.predictor = new DumbPredictor();
-		//this.predictor = new DumbUserPredictor(repository);
 		this.predictor = new ItemBasedPredictor(repository);
 		this.fallbackpredictor = new DumbUserPredictor(repository);
 	}
@@ -41,6 +40,7 @@ public class Recommender {
 		{
 			float p = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
 			if(p==0) p = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+			
 			MovieRating pmr = new MovieRating(
 					mr.getUserId(), 
 					mr.getMovieId(), 
