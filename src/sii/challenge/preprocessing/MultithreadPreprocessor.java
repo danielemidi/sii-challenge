@@ -14,7 +14,7 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 	private int id1lessthan;
 	private int id1greaterthan;
 	
-	public MultithreadPreprocessor(int mod, int tot, int id1lessthan, int id1greaterthan)
+	public MultithreadPreprocessor(int mod, int tot, int id1greaterthan, int id1lessthan)
 	{
 		super();
 		this.mod = mod;
@@ -41,7 +41,7 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		
 		System.out.println("["+this.mod+"] ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
 		
-		int firstID1todo = (int) super.repository.getSingleFloatValue("SELECT MIN(iditem1) FROM item_static_similarities GROUP BY iditem1 HAVING (iditem1<? OR iditem1>=?) AND iditem1 % ? = ? AND COUNT(iditem2)<10197", new int[]{this.id1lessthan, this.id1greaterthan, this.tot, this.mod});
+		int firstID1todo = (int) super.repository.getSingleFloatValue("SELECT MIN(iditem1) FROM item_static_similarities GROUP BY iditem1 HAVING (iditem1>=? AND iditem1<?) AND iditem1 % ? = ? AND COUNT(iditem2)<10197", new int[]{this.id1greaterthan, this.id1lessthan, this.tot, this.mod});
 		if(firstID1todo > 0) {
 			// ce n'è uno incompleto
 			intmovieids = this.getRemainingMovieIDs(firstID1todo);
@@ -57,12 +57,12 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		this.connection = this.dataSource.getConnection();
 		for(int id1 : extmovieids)
 		{
-				for(int id2 : intmovieids) this.calculateAndPersistSimilarity(id1, id2);
-				
-				if(incompletemovie){
-					intmovieids = this.getMovieIDs();
-					incompletemovie = false;
-				}
+			for(int id2 : intmovieids) this.calculateAndPersistSimilarity(id1, id2);
+			
+			if(incompletemovie){
+				intmovieids = this.getMovieIDs();
+				incompletemovie = false;
+			}
 		}
 
 		try {
