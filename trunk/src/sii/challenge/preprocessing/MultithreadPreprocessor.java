@@ -37,7 +37,7 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		
 		System.out.println("["+this.mod+"] ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
 		
-		int firstID1todo = (int) super.repository.getSingleFloatValue("SELECT MIN(iditem1) FROM item_static_similarities GROUP BY iditem1 HAVING iditem1 % ? = ? AND COUNT(iditem2)<10197 LIMIT 1", new int[]{this.tot, this.mod});
+		int firstID1todo = (int) super.repository.getSingleFloatValue("SELECT MIN(iditem1) FROM item_static_similarities GROUP BY iditem1 HAVING iditem1 % ? = ? AND COUNT(iditem2)<10197", new int[]{this.tot, this.mod});
 		if(firstID1todo > 0) {
 			// ce n'è uno incompleto
 			intmovieids = this.getRemainingMovieIDs(firstID1todo);
@@ -45,7 +45,6 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		} else {
 			// bisogna cominciarne uno nuovo
 			firstID1todo = ((int)super.repository.getSingleFloatValue("SELECT MAX(iditem1) FROM item_static_similarities WHERE iditem1 % ? = ?", new int[]{this.tot, this.mod})) + 1;
-			//int firstID2todo = ((int)super.repository.getSingleFloatValue("SELECT MAX(iditem2) FROM item_static_similarities WHERE iditem1=?", new int[]{firstID1todo})) + 1;
 			intmovieids = this.getMovieIDs();
 		}
 		
