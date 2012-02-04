@@ -2,7 +2,9 @@ package sii.challenge.preprocessing;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MultithreadPreprocessor extends Preprocessor implements Runnable {
@@ -30,20 +32,22 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 	{
 		System.out.println("["+this.mod+"] ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
 		
-		List<Integer> movieids = this.getMovieIDs();
-		
 		int firstID1todo = (int) super.repository.getSingleFloatValue("SELECT iditem1 FROM item_static_similarities GROUP BY iditem1 HAVING iditem1 % ? = ? AND COUNT(iditem2)<10197 LIMIT 1", new int[]{this.tot, this.mod});
 		if(firstID1todo==0)
 		{
 			firstID1todo = ((int)super.repository.getSingleFloatValue("SELECT MAX(iditem1) FROM item_static_similarities GROUP BY iditem1 HAVING iditem1 % ? = ? AND COUNT(iditem2)=10197", new int[]{this.tot, this.mod})) + 1;
 		}
 		int firstID2todo = (int) super.repository.getSingleFloatValue("SELECT MAX(iditem2) FROM item_static_similarities WHERE iditem1=?", new int[]{firstID1todo});
+				
+		List<Integer> extmovieids = this.getMovieIDs(firstID1todo, this.tot, this.mod);
+		List<Integer> intmovieids = this.getMovieIDs();
 		
-		for(int id1 : movieids)
+		Connection connection = this.dataSource.getConnection();
+		for(int id1 : extmovieids)
 		{
-			if(id1>=firstID1todo && id1 % this.tot == this.mod) 
-			{
-				for(int id2 : movieids)
+			//if(id1>=firstID1todo && (id1<2000 || id1>=7000) && id1 % this.tot == this.mod) 
+			//{
+				for(int id2 : intmovieids)
 				{
 					if(id2>firstID2todo) 
 					{
@@ -70,7 +74,6 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 						
 						System.out.println("["+this.mod+"] " + id1+"\t"+id2+"\t"+actorsincommon+"\t"+directorsincommon+"\t"+genresincommon+"\t"+countriesincommon+"\t"+tagsincommon+"\t"+allcriticsscorediscrepance+"\t"+topcriticsscorediscrepance+"\t"+audiencescorediscrepance+"\t"+decadediscrepance+"\t\t"+similarity);
 						
-						Connection connection = this.dataSource.getConnection();
 						PreparedStatement statement = null;
 						String query = "INSERT INTO item_static_similarities (iditem1, iditem2, actors, directors, genres, countries, tags, allcriticsscore, topcriticsscore, audiencescore, decadediscrepance, similarity) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 						
@@ -96,7 +99,7 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 						} finally {
 							try {
 								if (statement != null) statement.close();
-								if (connection != null) connection.close();
+								//if (connection != null) connection.close();
 							} catch (SQLException e) {
 								throw new Exception(e.getMessage());
 							}
@@ -104,9 +107,48 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 					}
 				}
 				firstID2todo = 0;
-			}
-			//i++;
+			//}
 		}
+
+		try {
+			if (connection != null) connection.close();
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		}
+	}
+	
+	
+	
+	protected List<Integer> getMovieIDs(int AfterIDIncluded, int tot, int mod) throws Exception
+	{
+		Connection connection = this.dataSource.getConnection();
+		PreparedStatement statement = null;
+		List<Integer> ids = new LinkedList<Integer>();
+		ResultSet result = null;
+		String query = "SELECT id FROM movies WHERE id>? AND id % ? = ?";
+		
+		try {
+			statement = connection.prepareStatement(query);
+			statement.setInt(1, AfterIDIncluded);
+			statement.setInt(2, tot);
+			statement.setInt(3, mod);
+			result = statement.executeQuery();
+
+			while (result.next()) {
+				ids.add(result.getInt(1));
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			try {
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+		
+		return ids;
 	}
 	
 }

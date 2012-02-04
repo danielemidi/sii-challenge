@@ -23,6 +23,7 @@ import sii.challenge.repository.KSetRepository;
 public class CrossValidator {
 
 	public final int K = 500;
+	public final int STOP_AFTER_EVERY = 5;
 	
 	public float runTest()
 	{
@@ -52,8 +53,11 @@ public class CrossValidator {
 				
 				totalmae += mae;
 				System.out.println("CV - Global MAE (partial, after iteration " + c + "): " + (totalmae/(c)));
-				System.out.print("PRESS ENTER TO CONTINUE...");
-				System.in.read();
+				
+				if(c % STOP_AFTER_EVERY == 0) {
+					System.out.print("PRESS ANY KEY TO CONTINUE...");
+					System.in.read();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
