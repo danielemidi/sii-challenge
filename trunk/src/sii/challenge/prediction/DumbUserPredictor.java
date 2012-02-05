@@ -19,7 +19,7 @@ public class DumbUserPredictor implements IPredictor {
 	@Override
 	public float PredictRating(int userid, int movieid, long timestamp) {
 		try {
-			return this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where userID=?", new int[]{userid});
+			return this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where userID=? and movieID<>?", new int[]{userid, movieid});
 		} catch (Exception e) {
 			return 0;
 		}
