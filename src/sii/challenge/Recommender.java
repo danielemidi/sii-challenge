@@ -36,25 +36,38 @@ public class Recommender {
 		int c = input.size();
 		System.out.println("R - Recommending...");
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
+		
+		float exp;
+		float p;
+		float f;
+		boolean pmissing;
+		
+		int pc = 0; int fc = 0;
+		
 		for(MovieRating mr : input)
 		{
-			float exp =  mr.getRating();
+			exp =  mr.getRating();
 			
-			float p = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
-			this.printStats(i, c, this.predictor, exp, p);
+			p = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+			pmissing = p==0;
+			p = .5F*Math.round(p/.5);
+			//this.printStats(i, c, this.predictor, exp, p);
 
-			float f = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
-			this.printStats(i, c, this.fallbackpredictor, exp, f);
+			f = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+			f = .5F*Math.round(f/.5);
+			//this.printStats(i, c, this.fallbackpredictor, exp, f);
 			
-			if(p==0) p = f;
-			
-			/*if(p==0) {
-				System.err.print("*");
-				p = f;
-			} else {
-				System.out.print(".");
+			float perr = Math.abs(exp-p);
+			float ferr = Math.abs(exp-f);
+			if(perr<ferr){
+				System.out.println("\tP:"+perr+" *\t\tF:"+ferr + (pmissing?"\t\t!":""));
+				pc++;
+			}else{
+				System.out.println("\tP:"+perr+"  \t\tF:"+ferr + " *" + (pmissing?"\t\t!":""));
+				fc++;
 			}
-			if(i % 150 == 0) System.out.println();*/
+			
+			if(pmissing) p = f;
 			
 			MovieRating pmr = new MovieRating(
 				mr.getUserId(), 
@@ -64,20 +77,18 @@ public class Recommender {
 			);
 			ratings.add(pmr);
 			
-			/*System.out.println("\t" + i + "/" + c + "; " +
-							   "Predictor: "+this.predictor.getClass().getName() + "; " +
-							   "Expected: " + mr.getRating() + "; " +
-							   "Actual: " + pmr.getRating() + "; " +
-							   "Error: " + Math.abs(mr.getRating()-pmr.getRating()) + ". ");*/
 			i++;
 		}
+		
+		System.out.println("\tPc = " + pc + "; Fc = " + fc);
+		
 		return ratings;
 	}
 	
 	private void printStats(int i, int c, IPredictor p, float exp, float act)
 	{
 		System.out.println("\t" + i + "/" + c + "; " +
-						   "Predictor: "+p.getClass().getName() + "; " +
+						   "Predictor: " + p.getClass().getName() + "; " +
 						   "Expected: " + exp + "; " +
 						   "Actual: " + act + "; " +
 						   "Error: " + Math.abs(exp-act) + ". ");
