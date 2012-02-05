@@ -37,32 +37,16 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 	{
 		List<Integer> extmovieids;
 		List<Integer> intmovieids;
-		boolean incompletemovie = false;
 		
 		System.out.println("["+this.mod+"] ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
 		
-		int firstID1todo = (int) super.repository.getSingleFloatValue("SELECT MIN(iditem1) FROM item_static_similarities GROUP BY iditem1 HAVING (iditem1>=? AND iditem1<?) AND iditem1 % ? = ? AND COUNT(iditem2)<10197", new int[]{this.id1greaterthan, this.id1lessthan, this.tot, this.mod});
-		if(firstID1todo > 0) {
-			// ce n'è uno incompleto
-			intmovieids = this.getRemainingMovieIDs(firstID1todo);
-			incompletemovie = true;
-		} else {
-			// bisogna cominciarne uno nuovo
-			firstID1todo = ((int)super.repository.getSingleFloatValue("SELECT MAX(iditem1) FROM item_static_similarities WHERE iditem1 % ? = ?", new int[]{this.tot, this.mod})) + 1;
-			intmovieids = this.getMovieIDs();
-		}
-		
-		extmovieids = this.getMovieIDs(firstID1todo, this.tot, this.mod);
+		extmovieids = this.getIncompleteMovieIDs(this.id1greaterthan, this.id1lessthan, this.tot, this.mod);
 		
 		this.connection = this.dataSource.getConnection();
 		for(int id1 : extmovieids)
 		{
+			intmovieids = this.getRemainingInternalMovieIDs(id1);
 			for(int id2 : intmovieids) this.calculateAndPersistSimilarity(id1, id2);
-			
-			if(incompletemovie){
-				intmovieids = this.getMovieIDs();
-				incompletemovie = false;
-			}
 		}
 
 		try {
@@ -76,21 +60,26 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 	protected String formatSimilarityLogLine(int id1, int id2, float actorsincommon, float directorsincommon, float genresincommon, float countriesincommon, float tagsincommon, float allcriticsscorediscrepance, float topcriticsscorediscrepance, float audiencescorediscrepance, float decadediscrepance, float similarity) {
 		return "["+this.mod+"] " + super.formatSimilarityLogLine(id1, id2, actorsincommon, directorsincommon, genresincommon, countriesincommon, tagsincommon, allcriticsscorediscrepance, topcriticsscorediscrepance, audiencescorediscrepance, decadediscrepance, similarity);
 	}
-	
-	
-	protected List<Integer> getMovieIDs(int AfterIDIncluded, int tot, int mod) throws Exception
+
+
+	protected List<Integer> getIncompleteMovieIDs(int AfterIDIncluded, int BeforeIDExcluded, int tot, int mod) throws Exception
 	{
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		List<Integer> ids = new LinkedList<Integer>();
 		ResultSet result = null;
-		String query = "SELECT id FROM movies WHERE id>=? AND id % ? = ?";
+		String query = "SELECT id FROM movies WHERE (id>=? AND id<?) AND id % ? = ? AND id NOT IN (SELECT iditem1 FROM item_static_similarities WHERE (iditem1>=? AND iditem1<?) AND iditem1 % ? = ? GROUP BY iditem1 HAVING COUNT(iditem2)=10197)";
 		
 		try {
 			statement = connection.prepareStatement(query);
 			statement.setInt(1, AfterIDIncluded);
-			statement.setInt(2, tot);
-			statement.setInt(3, mod);
+			statement.setInt(2, BeforeIDExcluded);
+			statement.setInt(3, tot);
+			statement.setInt(4, mod);
+			statement.setInt(5, AfterIDIncluded);
+			statement.setInt(6, BeforeIDExcluded);
+			statement.setInt(7, tot);
+			statement.setInt(8, mod);
 			result = statement.executeQuery();
 
 			while (result.next()) {
@@ -109,5 +98,4 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		
 		return ids;
 	}
-	
 }
