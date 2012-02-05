@@ -1,6 +1,6 @@
 package sii.challenge.prediction;
 
-import sii.challenge.repository.KSetRepository;
+import sii.challenge.repository.IRepository;
 
 /**
  * 
@@ -10,9 +10,9 @@ import sii.challenge.repository.KSetRepository;
  */
 public class ItemBasedPredictor implements IPredictor {
 
-	private final KSetRepository repository;
+	private final IRepository repository;
 	
-	public ItemBasedPredictor(KSetRepository repository)
+	public ItemBasedPredictor(IRepository repository)
 	{
 		this.repository = repository;
 	}
@@ -30,11 +30,11 @@ public class ItemBasedPredictor implements IPredictor {
 				new long[]{ timestamp, timestamp, userid, movieid } );*/
 			p = this.repository.getSingleFloatValue(
 					"SELECT SUM(URM.rating * (ISS.similarity))/SUM(ISS.similarity) FROM " +
-					"(SELECT * FROM user_ratedmovies WHERE userID=?) URM " +
+					"(SELECT * FROM user_ratedmovies WHERE userID=? AND movieID<>?) URM " +
 					"JOIN " +
 					"(SELECT iditem2, similarity FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
 					"ON URM.movieID=ISS.iditem2", 
-					new long[]{ userid, movieid } );
+					new int[]{ userid, movieid, movieid } );
 			
 		} catch (Exception e) {
 			return 0;

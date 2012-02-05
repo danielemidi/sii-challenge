@@ -39,10 +39,11 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		List<Integer> intmovieids;
 		
 		System.out.println("["+this.mod+"] ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
+
+		this.connection = this.dataSource.getConnection();
 		
 		extmovieids = this.getIncompleteMovieIDs(this.id1greaterthan, this.id1lessthan, this.tot, this.mod);
 		
-		this.connection = this.dataSource.getConnection();
 		for(int id1 : extmovieids)
 		{
 			intmovieids = this.getRemainingInternalMovieIDs(id1);
@@ -64,14 +65,13 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 
 	protected List<Integer> getIncompleteMovieIDs(int AfterIDIncluded, int BeforeIDExcluded, int tot, int mod) throws Exception
 	{
-		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		List<Integer> ids = new LinkedList<Integer>();
 		ResultSet result = null;
 		String query = "SELECT id FROM movies WHERE (id>=? AND id<?) AND id % ? = ? AND id NOT IN (SELECT iditem1 FROM item_static_similarities WHERE (iditem1>=? AND iditem1<?) AND iditem1 % ? = ? GROUP BY iditem1 HAVING COUNT(iditem2)=10197)";
 		
 		try {
-			statement = connection.prepareStatement(query);
+			statement = this.connection.prepareStatement(query);
 			statement.setInt(1, AfterIDIncluded);
 			statement.setInt(2, BeforeIDExcluded);
 			statement.setInt(3, tot);
@@ -90,7 +90,6 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		} finally {
 			try {
 				if (statement != null) statement.close();
-				if (connection != null) connection.close();
 			} catch (SQLException e) {
 				throw new Exception(e.getMessage());
 			}

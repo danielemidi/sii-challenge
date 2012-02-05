@@ -5,7 +5,7 @@ import java.util.List;
 
 import sii.challenge.domain.*;
 import sii.challenge.prediction.*;
-import sii.challenge.repository.KSetRepository;
+import sii.challenge.repository.IRepository;
 
 /**
  * 
@@ -22,7 +22,7 @@ public class Recommender {
 	private IPredictor predictor;
 	private IPredictor fallbackpredictor;
 	
-	public Recommender(KSetRepository repository)
+	public Recommender(IRepository repository)
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		//this.predictor = new DumbPredictor();
@@ -38,30 +38,49 @@ public class Recommender {
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
 		for(MovieRating mr : input)
 		{
+			float exp =  mr.getRating();
+			
 			float p = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
-			if(p==0) 
-			{
+			this.printStats(i, c, this.predictor, exp, p);
+
+			float f = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+			this.printStats(i, c, this.fallbackpredictor, exp, f);
+			
+			if(p==0) p = f;
+			
+			/*if(p==0) {
 				System.err.print("*");
-				p = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+				p = f;
+			} else {
+				System.out.print(".");
 			}
+			if(i % 150 == 0) System.out.println();*/
 			
 			MovieRating pmr = new MovieRating(
-					mr.getUserId(), 
-					mr.getMovieId(), 
-					mr.getTimestamp(), 
-					.5F*Math.round(p/.5)
+				mr.getUserId(), 
+				mr.getMovieId(), 
+				mr.getTimestamp(), 
+				.5F*Math.round(p/.5)
 			);
 			ratings.add(pmr);
-			if (mr.getRating() > 0) {
-				System.out.println("\t" + i + "/" + c + "; " +
-								   "Predictor: "+this.predictor.getClass().getName() + "; " +
-								   "Expected: " + mr.getRating() + "; " +
-								   "Actual: " + pmr.getRating() + "; " +
-								   "Error: " + Math.abs(mr.getRating()-pmr.getRating()) + ". ");
-			}
+			
+			/*System.out.println("\t" + i + "/" + c + "; " +
+							   "Predictor: "+this.predictor.getClass().getName() + "; " +
+							   "Expected: " + mr.getRating() + "; " +
+							   "Actual: " + pmr.getRating() + "; " +
+							   "Error: " + Math.abs(mr.getRating()-pmr.getRating()) + ". ");*/
 			i++;
 		}
 		return ratings;
+	}
+	
+	private void printStats(int i, int c, IPredictor p, float exp, float act)
+	{
+		System.out.println("\t" + i + "/" + c + "; " +
+						   "Predictor: "+p.getClass().getName() + "; " +
+						   "Expected: " + exp + "; " +
+						   "Actual: " + act + "; " +
+						   "Error: " + Math.abs(exp-act) + ". ");
 	}
 	
 }

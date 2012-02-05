@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import sii.challenge.util.DataSource;
 
-public class Repository {
+public class Repository implements IRepository {
 
 	private DataSource dataSource;
 	
@@ -19,13 +19,20 @@ public class Repository {
 
 	public float getSingleFloatValue(String query, int[] args) throws Exception
 	{
-		Connection connection = this.dataSource.getConnection();
-		float result = this.getSingleFloatValue(query, args, connection);
-
+		Connection connection = null;
+		float result = 0;
+		
 		try {
-			if (connection != null) connection.close();
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
+			connection = this.dataSource.getConnection();
+			result = this.getSingleFloatValue(query, args, connection);
+		} catch(Exception e) {
+			
+		} finally {
+			try {
+				if (connection != null) connection.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
 		}
 		
 		return result;

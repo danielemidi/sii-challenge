@@ -7,14 +7,14 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import sii.challenge.repository.Repository;
+import sii.challenge.repository.*;
 import sii.challenge.util.DataSource;
 
 public class Preprocessor {
 
 	protected DataSource dataSource;
 	protected Connection connection;
-	protected Repository repository;
+	protected IRepository repository;
 	
 	public Preprocessor()
 	{
@@ -33,10 +33,11 @@ public class Preprocessor {
 	protected void preprocessItemStaticSimilarity() throws Exception
 	{
 		System.out.println("ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
-		
-		List<Integer> movieids = this.getMovieIDs();
 
 		this.connection = this.dataSource.getConnection();
+		
+		List<Integer> movieids = this.getMovieIDs();
+		
 		for(int id1 : movieids)
 			for(int id2 : movieids)
 				calculateAndPersistSimilarity(id1, id2);
@@ -111,14 +112,13 @@ public class Preprocessor {
 	
 	protected List<Integer> getMovieIDs() throws Exception
 	{
-		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		List<Integer> ids = new LinkedList<Integer>();
 		ResultSet result = null;
 		String query = "SELECT id FROM movies";
 		
 		try {
-			statement = connection.prepareStatement(query);
+			statement = this.connection.prepareStatement(query);
 			result = statement.executeQuery();
 
 			while (result.next()) {
@@ -128,10 +128,7 @@ public class Preprocessor {
 			throw new Exception(e.getMessage());
 		} finally {
 			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
+				if (statement != null) statement.close();
 			} catch (SQLException e) {
 				throw new Exception(e.getMessage());
 			}
@@ -142,14 +139,13 @@ public class Preprocessor {
 	
 	protected List<Integer> getRemainingInternalMovieIDs(int iditem1) throws Exception
 	{
-		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		List<Integer> ids = new LinkedList<Integer>();
 		ResultSet result = null;
 		String query = "SELECT id from movies where id not in (SELECT iditem2 FROM item_static_similarities WHERE iditem1=?)";
 		
 		try {
-			statement = connection.prepareStatement(query);
+			statement = this.connection.prepareStatement(query);
 			statement.setInt(1, iditem1);
 			result = statement.executeQuery();
 
@@ -160,10 +156,7 @@ public class Preprocessor {
 			throw new Exception(e.getMessage());
 		} finally {
 			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
+				if (statement != null) statement.close();
 			} catch (SQLException e) {
 				throw new Exception(e.getMessage());
 			}

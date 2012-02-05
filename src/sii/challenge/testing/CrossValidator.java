@@ -1,12 +1,14 @@
 package sii.challenge.testing;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import sii.challenge.Recommender;
 import sii.challenge.domain.*;
-import sii.challenge.repository.KSetRepository;
+import sii.challenge.repository.*;
 
 /** 
  * 
@@ -44,6 +46,8 @@ public class CrossValidator {
 				Recommender recommender = new Recommender(repository);
 				System.out.println("CV - Loading testset...");
 				List<MovieRating> testset = repository.getTestSet();
+
+				System.out.println("CV - Recommending...");
 				List<MovieRating> predictions = recommender.recommend(testset);
 
 				System.out.println("CV - Calculating MAE...");
@@ -55,7 +59,7 @@ public class CrossValidator {
 				
 				if(c % STOP_AFTER_EVERY == 0) {
 					System.out.print("PRESS ANY KEY TO CONTINUE...");
-					System.in.read();
+					new BufferedReader(new InputStreamReader(System.in)).readLine(); 
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
