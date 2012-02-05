@@ -25,6 +25,8 @@ public class Preprocessor {
 	public void preprocess() throws Exception
 	{
 		this.preprocessItemStaticSimilarity();
+
+		System.out.println("Preprocessing complete.");
 	}
 	
 	
@@ -36,14 +38,8 @@ public class Preprocessor {
 
 		this.connection = this.dataSource.getConnection();
 		for(int id1 : movieids)
-		{
-			if(id1>39) {
-				for(int id2 : movieids)
-				{
-					calculateAndPersistSimilarity(id1, id2);
-				}
-			}
-		}
+			for(int id2 : movieids)
+				calculateAndPersistSimilarity(id1, id2);
 
 		try {
 			if (this.connection != null) this.connection.close();
@@ -143,36 +139,8 @@ public class Preprocessor {
 		
 		return ids;
 	}
-	protected List<Integer> getMovieIDs(int AfterIDIncluded) throws Exception
-	{
-		Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		List<Integer> ids = new LinkedList<Integer>();
-		ResultSet result = null;
-		String query = "SELECT id FROM movies WHERE id>=?";
-		
-		try {
-			statement = connection.prepareStatement(query);
-			statement.setInt(1, AfterIDIncluded);
-			result = statement.executeQuery();
-
-			while (result.next()) {
-				ids.add(result.getInt(1));
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			try {
-				if (statement != null) statement.close();
-				if (connection != null) connection.close();
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
-			}
-		}
-		
-		return ids;
-	}
-	protected List<Integer> getRemainingMovieIDs(int iditem1) throws Exception
+	
+	protected List<Integer> getRemainingInternalMovieIDs(int iditem1) throws Exception
 	{
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;

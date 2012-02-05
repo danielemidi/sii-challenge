@@ -39,7 +39,11 @@ public class Recommender {
 		for(MovieRating mr : input)
 		{
 			float p = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
-			if(p==0) p = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+			if(p==0) 
+			{
+				System.err.print("*");
+				p = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+			}
 			
 			MovieRating pmr = new MovieRating(
 					mr.getUserId(), 
