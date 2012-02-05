@@ -59,7 +59,7 @@ public class KSetRepository extends Repository implements IRepository {
 
 	public float getSingleFloatValue(String query, int[] args, Connection connection) throws Exception
 	{
-		query = adaptQueryToCurrentKSet(query);
+		//query = adaptQueryToCurrentKSet(query);
 		return super.getSingleFloatValue(query, args, connection);
 	}
 	public float getSingleFloatValueWithoutQueryRewriting(String query, int[] args) throws Exception
