@@ -12,13 +12,13 @@ import sii.challenge.domain.RatingMatrix;
 import sii.challenge.domain.TrainingDataset;
 import sii.challenge.util.DataSource;
 
-public class KSetRepository {
+public class KSetRepository extends Repository implements IRepository {
 
 	private DataSource dataSource;
 	private int K;
+	private int KSetSize;
 	private int CurrentSetIndex;
 	
-	private int UserCount = 0;
 	private int MovieRatingCount = 0;
 	
 	public KSetRepository(int K)
@@ -26,95 +26,72 @@ public class KSetRepository {
 		this.dataSource = new DataSource();
 		
 		try {
-			this.UserCount = this.getUserCount();
-			this.MovieRatingCount = this.getMovieRatingCount();
+			this.MovieRatingCount = (int)this.getSingleFloatValueWithoutQueryRewriting("SELECT COUNT(*) FROM user_ratedmovies", new int[]{});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		this.K = K;
+		this.KSetSize = this.MovieRatingCount / this.K;
 	}
+	
 	
 	public void setCurrentSetIndex(int index)
 	{
 		this.CurrentSetIndex = index;
 	}
 	
+
 	
-	public float getSingleFloatValue(String query, int[] args) throws Exception
+	private String getKView()
 	{
-		Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		ResultSet result = null;
-		float res = 0;
+		int startrowindex = this.KSetSize*this.CurrentSetIndex - 1;
+		int ithsetendingindex = this.KSetSize*(this.CurrentSetIndex+1);
+		
+		return "((SELECT * FROM user_ratedmovies LIMIT 0, "+startrowindex+") UNION (SELECT * FROM user_ratedmovies LIMIT "+ithsetendingindex+", "+this.MovieRatingCount+")) AS KVIEW";
+	}
+	private String adaptQueryToCurrentKSet(String query)
+	{
+		return query.replaceAll("user_ratedmovies", this.getKView());
+	}
+	
 
+
+	public float getSingleFloatValue(String query, int[] args, Connection connection) throws Exception
+	{
+		query = adaptQueryToCurrentKSet(query);
+		return super.getSingleFloatValue(query, args, connection);
+	}
+	public float getSingleFloatValueWithoutQueryRewriting(String query, int[] args) throws Exception
+	{
+		Connection connection = null;
+		float result = 0;
+		
 		try {
-			statement = connection.prepareStatement(query);
-			for(int i = 0; i<args.length; i++) statement.setInt(i+1, args[i]);
-			result = statement.executeQuery();
-
-			while (result.next()){
-				res = result.getFloat(1);
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
+			connection = this.dataSource.getConnection();
+			result = super.getSingleFloatValue(query, args, connection);
+		} catch(Exception e) {
+			
 		} finally {
 			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
+				if (connection != null) connection.close();
 			} catch (SQLException e) {
 				throw new Exception(e.getMessage());
 			}
 		}
 		
-		return res;
-	}
-	public float getSingleFloatValue(String query, long[] args) throws Exception
-	{
-		Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		ResultSet result = null;
-		float res = 0;
-
-		try {
-			statement = connection.prepareStatement(query);
-			for(int i = 0; i<args.length; i++) statement.setLong(i+1, args[i]);
-			result = statement.executeQuery();
-
-			while (result.next()){
-				res = result.getFloat(1);
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
-			}
-		}
-		
-		return res;
+		return result;
 	}
 	
-	public List<MovieRating> getMovieRatingList(String query, int[] args) throws Exception {
+	
+	public List<MovieRating> getMovieRatingListFromTrainingSet(String query, int[] args) throws Exception
+	{
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
 		ResultSet result = null;
 
-		int count = this.MovieRatingCount;
-		int ksetsize = count / this.K;
-		int startrowindex = ksetsize*this.CurrentSetIndex - 1;
-		int ithsetendingindex = ksetsize*(this.CurrentSetIndex+1);
-		
-		String kview = "((SELECT * FROM user_ratedmovies LIMIT 0, "+startrowindex+") UNION (SELECT * FROM user_ratedmovies LIMIT "+ithsetendingindex+", "+count+"))";
-		query = query.replaceAll("user_ratedmoview", kview);
+		query = adaptQueryToCurrentKSet(query);
 		
 		try {
 			statement = connection.prepareStatement(query);
@@ -144,78 +121,6 @@ public class KSetRepository {
 		}
 		
 		return ratings;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	public int getUserCount() throws Exception
-	{
-		Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		ResultSet result = null;
-		String query = "select count(distinct userid) from sii_challenge.user_ratedmovies";
-		int count = -1;
-
-		try {
-			statement = connection.prepareStatement(query);
-			result = statement.executeQuery();
-
-			while (result.next()){
-				count = result.getInt(1);
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
-			}
-		}
-		
-		return count;
-	}
-	public int getMovieRatingCount() throws Exception
-	{
-		Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		ResultSet result = null;
-		String query = "select COUNT(*) from user_ratedmovies";
-		int count = -1;
-
-		try {
-			statement = connection.prepareStatement(query);
-			result = statement.executeQuery();
-
-			while (result.next()){
-				count = result.getInt(1);
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
-			}
-		}
-		
-		return count;
 	}
 	
 	
@@ -268,76 +173,6 @@ public class KSetRepository {
 		}
 		
 		return ratings;
-	}
-	
-
-	
-	/**
-	 * Restituisce un Training Set costruito considerando tutti i K-1 set della tabella degli UserRatings (divisa in K set), tranne l'i-esimo.
-	 * @return
-	 * @throws Exception 
-	 */
-	public TrainingDataset getTrainingSet() throws Exception {
-		Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		List<MovieRating> ratings = new LinkedList<MovieRating>();
-		ResultSet result = null;
-		String query = "select * from user_ratedmovies order by movieid limit ?, ?";
-
-		int count = this.MovieRatingCount;
-		int ksetsize = count / this.K;
-		int ithsetendingindex = ksetsize*(this.CurrentSetIndex+1);
-		
-		try {
-			// prendo i record precedenti al set i-esimo
-			statement = connection.prepareStatement(query);
-			statement.setInt(1, 0);
-			statement.setInt(2, ksetsize-1);
-			result = statement.executeQuery();
-
-			while (result.next()) {
-				MovieRating rating = new MovieRating(
-						result.getInt("userID"),
-						result.getInt("movieID"),
-						result.getLong("timestamp"),
-						result.getFloat("rating")
-				);
-				ratings.add(rating);
-			}
-			
-			// prendo i record successivi al set i-esimo
-			statement = connection.prepareStatement(query);
-			statement.setInt(1, ithsetendingindex);
-			statement.setInt(2, count);
-			result = statement.executeQuery();
-
-			while (result.next()) {
-				MovieRating rating = new MovieRating(
-						result.getInt("userID"),
-						result.getInt("movieID"),
-						result.getLong("timestamp"),
-						result.getFloat("rating")
-				);
-				ratings.add(rating);
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
-			}
-		}
-		
-		// costruisce il trainingset
-		TrainingDataset trainingdataset = new TrainingDataset();
-		trainingdataset.setMovieratingmatrix(new RatingMatrix(count, this.UserCount, ratings));
-		
-		return trainingdataset;
 	}
 	
 }
