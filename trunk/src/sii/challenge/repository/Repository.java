@@ -9,12 +9,29 @@ import sii.challenge.util.DataSource;
 public class Repository implements IRepository {
 
 	private DataSource dataSource;
+	private Connection persistentConnection;
 	
 	public Repository()
 	{
 		this.dataSource = new DataSource();
+		try {
+			this.persistentConnection = this.dataSource.getConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
+	protected void finalize() throws Throwable {
+	    try {
+			try {
+				if (this.persistentConnection != null) this.persistentConnection.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+	    } finally {
+	        super.finalize();
+	    }
+	}
 	
 
 	public float getSingleFloatValue(String query, int[] args) throws Exception
@@ -23,8 +40,8 @@ public class Repository implements IRepository {
 		float result = 0;
 		
 		try {
-			connection = this.dataSource.getConnection();
-			result = this.getSingleFloatValue(query, args, connection);
+			//connection = this.dataSource.getConnection();
+			result = this.getSingleFloatValue(query, args, this.persistentConnection);
 		} catch(Exception e) {
 			
 		} finally {
@@ -46,6 +63,64 @@ public class Repository implements IRepository {
 		try {
 			statement = connection.prepareStatement(query);
 			for(int i = 0; i<args.length; i++) statement.setInt(i+1, args[i]);
+			
+			result = statement.executeQuery();
+
+			while (result.next()){
+				res = result.getFloat(1);
+			}
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			try {
+				if (statement != null) statement.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+		
+		return res;
+	}
+	
+	
+	
+
+
+	public float getSingleFloatValue(String query, Object[] args) throws Exception
+	{
+		Connection connection = null;
+		float result = 0;
+		
+		try {
+			//connection = this.dataSource.getConnection();
+			result = this.getSingleFloatValue(query, args, this.persistentConnection);
+		} catch(Exception e) {
+			
+		} finally {
+			try {
+				if (connection != null) connection.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+		
+		return result;
+	}
+	public float getSingleFloatValue(String query, Object[] args, Connection connection) throws Exception
+	{
+		PreparedStatement statement = null;
+		ResultSet result = null;
+		float res = 0;
+
+		try {
+			statement = connection.prepareStatement(query);
+			for(int i = 0; i<args.length; i++){
+				if(args[i].getClass().equals(Integer.class)) 
+					statement.setInt(i+1, (int)args[i]);
+				else if(args[i].getClass().equals(Long.class)) 
+					statement.setLong(i+1, (long)args[i]);
+			}
+			
 			result = statement.executeQuery();
 
 			while (result.next()){
