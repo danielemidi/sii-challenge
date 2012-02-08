@@ -30,10 +30,10 @@ public class SimpleTimeDependentBiasPredictor implements IPredictor {
 			if(timeDependentOverallAverageRating<=0) timeDependentOverallAverageRating = this.overallAverageRating;
 			
 			// deviazione dalla media globale della media dei voti dell'utente
-			float userbias = this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where userID=? and timestamp<=?", new Object[]{userid, timestamp}) - this.overallAverageRating;
+			float userbias = this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where userID=? and timestamp<=?", new Object[]{userid, timestamp}) - timeDependentOverallAverageRating;
 			
 			// deviazione dalla media globale della media dei voti per il film
-			float itembias = this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where movieID=? and timestamp<=?", new Object[]{movieid, timestamp}) - this.overallAverageRating;
+			float itembias = this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where movieID=? and timestamp<=?", new Object[]{movieid, timestamp}) - timeDependentOverallAverageRating;
 			
 			return this.overallAverageRating + userbias + itembias;
 		} catch (Exception e) {
