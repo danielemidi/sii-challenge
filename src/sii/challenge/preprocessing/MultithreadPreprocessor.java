@@ -68,7 +68,8 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 		PreparedStatement statement = null;
 		List<Integer> ids = new LinkedList<Integer>();
 		ResultSet result = null;
-		String query = "SELECT id FROM movies WHERE (id>=? AND id<?) AND id % ? = ? AND id NOT IN (SELECT iditem1 FROM item_static_similarities WHERE (iditem1>=? AND iditem1<?) AND iditem1 % ? = ? GROUP BY iditem1 HAVING COUNT(iditem2)=10197)";
+		String query = "SELECT M.id FROM (SELECT id from movies where id>=? AND id<? AND id % ? = ?) as M LEFT JOIN (select iditem1 from item_static_similarities where iditem1>=? AND iditem1<? AND iditem1 % ? = ? GROUP BY iditem1 HAVING COUNT(iditem2)=10197) as S ON M.id = S.iditem1 WHERE S.iditem1 IS NULL"; 
+		//String query = "SELECT id FROM movies WHERE (id>=? AND id<?) AND id % ? = ? AND id NOT IN (SELECT iditem1 FROM item_static_similarities WHERE (iditem1>=? AND iditem1<?) AND iditem1 % ? = ? GROUP BY iditem1 HAVING COUNT(iditem2)=10197)";
 		
 		try {
 			statement = this.connection.prepareStatement(query);
