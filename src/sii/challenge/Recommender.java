@@ -26,7 +26,8 @@ public class Recommender {
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		//this.predictor = new DumbPredictor();
-		this.predictor = new ItemBasedPredictor(repository);
+		//this.predictor = new ItemBasedPredictor(repository);
+		this.predictor = new SimpleTimeDependentBiasPredictor(repository);
 		this.fallbackpredictor = new DumbUserPredictor(repository);
 	}
 	
@@ -39,8 +40,9 @@ public class Recommender {
 		
 		float exp;
 		float p;
+		float p1;
 		float f;
-		boolean pmissing;
+		boolean p1missing;
 		
 		int pc = 0; int fc = 0;
 		
@@ -48,26 +50,28 @@ public class Recommender {
 		{
 			exp =  mr.getRating();
 			
-			p = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
-			pmissing = p==0;
-			p = .5F*Math.round(p/.5);
-			//this.printStats(i, c, this.predictor, exp, p);
+			p1 = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+			p1missing = p1==0;
 
 			f = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+
+			if(!p1missing) p = (p1+f)/2; // calcola la predizione come media aritmetica di itembased e dumbuser
+			else 	       p = f;
+			
+			p1 = .5F*Math.round(p1/.5);
+			//this.printStats(i, c, this.predictor, exp, p1);
 			f = .5F*Math.round(f/.5);
 			//this.printStats(i, c, this.fallbackpredictor, exp, f);
 			
-			float perr = Math.abs(exp-p);
+			float perr = Math.abs(exp-p1);
 			float ferr = Math.abs(exp-f);
 			if(perr<ferr){
-				System.out.println("\tP:"+perr+" *\t\tF:"+ferr + (pmissing?"\t\t!":""));
+				System.out.println(i + "/" + c + ": \tP:"+perr+" *\t\tF:"+ferr + (p1missing?"\t\t!":""));
 				pc++;
 			}else{
-				System.out.println("\tP:"+perr+"  \t\tF:"+ferr + " *" + (pmissing?"\t\t!":""));
+				System.out.println(i + "/" + c + ": \tP:"+perr+"  \t\tF:"+ferr + " *" + (p1missing?"\t\t!":""));
 				fc++;
 			}
-			
-			if(pmissing) p = f;
 			
 			MovieRating pmr = new MovieRating(
 				mr.getUserId(), 
