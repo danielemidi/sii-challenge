@@ -41,6 +41,11 @@ public class KSetRepository extends Repository implements IRepository {
 		this.CurrentSetIndex = index;
 	}
 	
+	public int getKSetSize()
+	{
+		return this.KSetSize;
+	}
+	
 
 	
 	private String getKView()
