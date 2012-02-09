@@ -24,26 +24,19 @@ public class Recommender {
 	private float[] predictorErrors;
 	private float[] predictorMAEs;
 	
-	//private IPredictor predictor;
-	//private IPredictor fallbackpredictor;
-	
 	public Recommender(IRepository repository)
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		this.predictors = new IPredictor[]{
 			new DumbUserPredictor(repository)
-			,new ItemBasedPredictor(repository)
+			,new ItemTagBasedPredictor(repository)
+			,new ItemGenreBasedPredictor(repository)
 			,new SimpleBiasPredictor(repository)
 			//,new SimpleTimeDependentBiasPredictor(repository)
 		};
 		this.predictions = new float[this.predictors.length];
 		this.predictorErrors = new float[this.predictors.length];
 		this.predictorMAEs = new float[this.predictors.length];
-		//this.predictor = new DumbPredictor();
-		//this.predictor = new ItemBasedPredictor(repository);
-		//this.predictor = new SimpleBiasPredictor(repository);
-		//this.predictor = new SimpleTimeDependentBiasPredictor(repository);
-		//this.fallbackpredictor = new DumbUserPredictor(repository);
 	}
 	
 	public List<MovieRating> recommend(List<MovieRating> input)

@@ -23,7 +23,7 @@ import sii.challenge.repository.*;
  */
 public class CrossValidator {
 
-	public final int K = 100;
+	public final int K = 500;
 	public final int STOP_AFTER_EVERY = 1;
 	
 	public float runTest()
