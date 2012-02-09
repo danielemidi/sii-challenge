@@ -19,16 +19,31 @@ import sii.challenge.repository.IRepository;
  */
 public class Recommender {
 
-	private IPredictor predictor;
-	private IPredictor fallbackpredictor;
+	private IPredictor[] predictors;
+	private float[] predictions;
+	private float[] predictorErrors;
+	private float[] predictorMAEs;
+	
+	//private IPredictor predictor;
+	//private IPredictor fallbackpredictor;
 	
 	public Recommender(IRepository repository)
 	{
 		System.out.println("R - Creating Predictor(s)...");
+		this.predictors = new IPredictor[]{
+			new DumbUserPredictor(repository)
+			,new ItemBasedPredictor(repository)
+			,new SimpleBiasPredictor(repository)
+			//,new SimpleTimeDependentBiasPredictor(repository)
+		};
+		this.predictions = new float[this.predictors.length];
+		this.predictorErrors = new float[this.predictors.length];
+		this.predictorMAEs = new float[this.predictors.length];
 		//this.predictor = new DumbPredictor();
 		//this.predictor = new ItemBasedPredictor(repository);
-		this.predictor = new SimpleTimeDependentBiasPredictor(repository);
-		this.fallbackpredictor = new DumbUserPredictor(repository);
+		//this.predictor = new SimpleBiasPredictor(repository);
+		//this.predictor = new SimpleTimeDependentBiasPredictor(repository);
+		//this.fallbackpredictor = new DumbUserPredictor(repository);
 	}
 	
 	public List<MovieRating> recommend(List<MovieRating> input)
@@ -40,30 +55,36 @@ public class Recommender {
 		
 		float exp;
 		float p;
-		float p1;
-		float f;
-		boolean p1missing;
+		float roundedpred;
 		
-		int pc = 0; int fc = 0;
+		for(int pi = 0; pi<this.predictors.length; pi++)
+		{
+			System.out.print(this.predictors[i].getClass().getSimpleName() + "\t");
+		}
+		System.out.println();
 		
 		for(MovieRating mr : input)
 		{
 			exp =  mr.getRating();
+			p = 0;
 			
-			p1 = this.predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
-			p1missing = p1==0;
+			System.out.printf("%5s/%s:\t",i,c);
+			for(int pi = 0; pi<this.predictors.length; pi++)
+			{
+				this.predictions[pi] = this.predictors[pi].PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+				roundedpred = .5F*Math.round(this.predictions[pi]/.5);
+				this.predictorErrors[pi] += Math.abs(exp-roundedpred/*this.predictions[pi]*/);
+				this.predictorMAEs[pi] = this.predictorErrors[pi]/i;
+				System.out.printf("%1.1f|%5.1f|%1.8f\t", Math.abs(exp-roundedpred), this.predictorErrors[pi], this.predictorMAEs[pi]);
+				p += this.predictions[pi];
+			}
+			
+			p /= this.predictors.length; // predizione totale come media aritmetica delle predizioni
+			p = .5F*Math.round(p/.5);
 
-			f = this.fallbackpredictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
-
-			if(!p1missing) p = (p1+f)/2; // calcola la predizione come media aritmetica di itembased e dumbuser
-			else 	       p = f;
-			
-			p1 = .5F*Math.round(p1/.5);
-			//this.printStats(i, c, this.predictor, exp, p1);
-			f = .5F*Math.round(f/.5);
-			//this.printStats(i, c, this.fallbackpredictor, exp, f);
-			
-			float perr = Math.abs(exp-p1);
+			System.out.println("]=> P: " + p + "\tERR: " + Math.abs(exp-p));
+						
+			/*float perr = Math.abs(exp-p1);
 			float ferr = Math.abs(exp-f);
 			if(perr<ferr){
 				System.out.println(i + "/" + c + ": \tP:"+perr+" *\t\tF:"+ferr + (p1missing?"\t\t!":""));
@@ -71,7 +92,7 @@ public class Recommender {
 			}else{
 				System.out.println(i + "/" + c + ": \tP:"+perr+"  \t\tF:"+ferr + " *" + (p1missing?"\t\t!":""));
 				fc++;
-			}
+			}*/
 			
 			MovieRating pmr = new MovieRating(
 				mr.getUserId(), 
@@ -83,8 +104,15 @@ public class Recommender {
 			
 			i++;
 		}
+
+		System.out.print("Total MAE:\t\t");
+		for(int pi = 0; pi<this.predictors.length; pi++)
+		{
+			this.predictorMAEs[pi] = this.predictorErrors[pi]/c;
+			System.out.printf("%1.8f\t", this.predictorMAEs[pi]);
+		}
 		
-		System.out.println("\tPc = " + pc + "; Fc = " + fc);
+		System.out.println();
 		
 		return ratings;
 	}

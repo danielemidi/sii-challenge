@@ -23,8 +23,8 @@ import sii.challenge.repository.*;
  */
 public class CrossValidator {
 
-	public final int K = 500;
-	public final int STOP_AFTER_EVERY = 5;
+	public final int K = 100;
+	public final int STOP_AFTER_EVERY = 1;
 	
 	public float runTest()
 	{
@@ -41,20 +41,26 @@ public class CrossValidator {
 		for(int i : indexes)
 		{
 			try {
-				System.out.println("CV - Current testset index = " + i + "...");
+				System.out.println("\nCV - Current testset index = " + i + "...");
 				repository.setCurrentSetIndex(i);
 				Recommender recommender = new Recommender(repository);
 				System.out.println("CV - Loading testset...");
 				List<MovieRating> testset = repository.getTestSet();
 
 				System.out.println("CV - Recommending...");
+				long start = System.currentTimeMillis();
 				List<MovieRating> predictions = recommender.recommend(testset);
+				long end = System.currentTimeMillis();
+
+				float elapsedSeconds = (end-start)/1000F;
+				System.out.println("CV - Elapsed time: "+elapsedSeconds + "seconds. ("+(repository.getKSetSize()/elapsedSeconds)+" predictions per second)");
 
 				System.out.println("CV - Calculating MAE...");
 				float mae = this.calculateMAE(testset, predictions);
 				System.out.println("CV - MAE of iteration " + c + ": " + mae);
 				
 				totalmae += mae;
+				System.out.println("CV - Total predictions count: " + (c*repository.getKSetSize()));
 				System.out.println("CV - Global MAE (partial, after iteration " + c + "): " + (totalmae/(c)));
 				
 				if(c % STOP_AFTER_EVERY == 0) {
