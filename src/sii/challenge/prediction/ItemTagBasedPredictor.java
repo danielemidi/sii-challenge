@@ -25,12 +25,16 @@ public class ItemTagBasedPredictor implements IPredictor {
 					"SELECT SUM(URM.rating * (ISS.tags))/SUM(ISS.tags) FROM " +
 					"(SELECT * FROM user_ratedmovies WHERE userID=? AND movieID<>?) URM " +
 					"JOIN " +
-					"(SELECT iditem2, similarity FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
+					"(SELECT iditem2, tags FROM item_static_similarities WHERE iditem1=? ORDER BY tags DESC LIMIT 100) ISS " +
 					"ON URM.movieID=ISS.iditem2", 
 					new int[]{ userid, movieid, movieid } );
 			
 		} catch (Exception e) {
 			return 0;
+		}
+
+		if(p<=0) {
+			p=2.5F;
 		}
 		
 		return p;

@@ -25,7 +25,7 @@ public class ItemGenreBasedPredictor implements IPredictor {
 					"SELECT SUM(URM.rating * (ISS.genres))/SUM(ISS.genres) FROM " +
 					"(SELECT * FROM user_ratedmovies WHERE userID=? AND movieID<>?) URM " +
 					"JOIN " +
-					"(SELECT iditem2, similarity FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
+					"(SELECT iditem2, genres FROM item_static_similarities WHERE iditem1=? ORDER BY genres DESC LIMIT 100) ISS " +
 					"ON URM.movieID=ISS.iditem2", 
 					new int[]{ userid, movieid, movieid } );
 			

@@ -26,10 +26,12 @@ public class SimpleBiasPredictor implements IPredictor {
 	public float PredictRating(int userid, int movieid, long timestamp) {
 		try {
 			// deviazione dalla media globale della media dei voti dell'utente
-			float userbias = this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where userID=?", new Object[]{userid}) - this.overallAverageRating;
+			float useravg = this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where userID=?", new Object[]{userid});
+			float userbias = useravg>0 ? useravg - this.overallAverageRating : 0;
 			
 			// deviazione dalla media globale della media dei voti per il film
-			float itembias = this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where movieID=?", new Object[]{movieid}) - this.overallAverageRating;
+			float movieavg = this.repository.getSingleFloatValue("select avg(rating) from user_ratedmovies where movieID=?", new Object[]{movieid});
+			float itembias = movieavg>0 ? movieavg - this.overallAverageRating : 0;
 			
 			return this.overallAverageRating + userbias + itembias;
 		} catch (Exception e) {
