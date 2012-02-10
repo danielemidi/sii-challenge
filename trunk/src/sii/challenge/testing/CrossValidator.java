@@ -23,14 +23,15 @@ import sii.challenge.repository.*;
  */
 public class CrossValidator {
 
-	public final int K = 500;
+	public final int K = 3;
 	public final int STOP_AFTER_EVERY = 1;
 	
 	public float runTest()
 	{
 		float totalmae = 0;
 		System.out.println("CV - Creating Repository...");
-		KSetRepository repository = new KSetRepository(K);
+		//IKSetRepository repository = new KSetRepository(K);
+		IKSetRepository repository = new K3SetRepository();
 		
 		List<Integer> indexes = new ArrayList<Integer>(K);
 		for(int i = 0; i < K; i++) indexes.add(i);

@@ -39,7 +39,7 @@ public class Recommender {
 		this.predictorMAEs = new float[this.predictors.length];
 	}
 	
-	public List<MovieRating> recommend(List<MovieRating> input)
+	public List<MovieRating> recommend(List<MovieRating> input) throws Exception
 	{
 		int i = 1;
 		int c = input.size();
@@ -51,9 +51,7 @@ public class Recommender {
 		float roundedpred;
 		
 		for(int pi = 0; pi<this.predictors.length; pi++)
-		{
-			System.out.print(this.predictors[i].getClass().getSimpleName() + "\t");
-		}
+			System.out.print(this.predictors[pi].getClass().getSimpleName() + "\t");
 		System.out.println();
 		
 		for(MovieRating mr : input)
@@ -76,6 +74,8 @@ public class Recommender {
 			p = .5F*Math.round(p/.5);
 
 			System.out.println("]=> P: " + p + "\tERR: " + Math.abs(exp-p));
+			
+			if(p<0) throw new Exception("Prediction is less then zero.");
 						
 			/*float perr = Math.abs(exp-p1);
 			float ferr = Math.abs(exp-f);
@@ -98,11 +98,11 @@ public class Recommender {
 			i++;
 		}
 
-		System.out.print("Total MAE:\t\t");
+		System.out.println("Total MAE:");
 		for(int pi = 0; pi<this.predictors.length; pi++)
 		{
 			this.predictorMAEs[pi] = this.predictorErrors[pi]/c;
-			System.out.printf("%1.8f\t", this.predictorMAEs[pi]);
+			System.out.printf("\t\t%s : %1.8f MAE\n", this.predictors[pi].getClass().getSimpleName(), this.predictorMAEs[pi]);
 		}
 		
 		System.out.println();

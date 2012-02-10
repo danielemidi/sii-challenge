@@ -8,11 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sii.challenge.domain.MovieRating;
-import sii.challenge.domain.RatingMatrix;
-import sii.challenge.domain.TrainingDataset;
 import sii.challenge.util.DataSource;
 
-public class KSetRepository extends Repository implements IKSetRepository {
+public class K3SetRepository extends Repository implements IKSetRepository {
 
 	private DataSource dataSource;
 	private int K;
@@ -21,7 +19,7 @@ public class KSetRepository extends Repository implements IKSetRepository {
 	
 	private int MovieRatingCount = 0;
 	
-	public KSetRepository(int K)
+	public K3SetRepository()
 	{
 		this.dataSource = new DataSource();
 		
@@ -31,14 +29,14 @@ public class KSetRepository extends Repository implements IKSetRepository {
 			e.printStackTrace();
 		}
 		
-		this.K = K;
+		this.K = 3;
 		this.KSetSize = this.MovieRatingCount / this.K;
+		this.CurrentSetIndex = 1;
 	}
-	
 	
 	public void setCurrentSetIndex(int index)
 	{
-		this.CurrentSetIndex = index;
+		// fake!
 	}
 	
 	public int getKSetSize()
@@ -50,11 +48,10 @@ public class KSetRepository extends Repository implements IKSetRepository {
 	
 	private String getKView()
 	{
-		int startrowindex = this.KSetSize*this.CurrentSetIndex - 1;
-		int ithsetendingindex = this.KSetSize*(this.CurrentSetIndex+1);
+		//int startrowindex = this.KSetSize*this.CurrentSetIndex - 1;
+		//int ithsetendingindex = this.KSetSize*(this.CurrentSetIndex+1);
 		
-		//return "((SELECT * FROM user_ratedmovies LIMIT 0, "+startrowindex+") UNION (SELECT * FROM user_ratedmovies LIMIT "+ithsetendingindex+", "+this.MovieRatingCount+")) AS KVIEW";
-		return "(SELECT userID, movieID, rating, 'timestamp' FROM numbered_user_ratedmovies WHERE N<"+startrowindex+" OR N>="+ithsetendingindex+") AS KVIEW";
+		return "trainingset";
 	}
 	private String adaptQueryToCurrentKSet(String query)
 	{
@@ -95,45 +92,6 @@ public class KSetRepository extends Repository implements IKSetRepository {
 	}
 	
 	
-	public List<MovieRating> getMovieRatingListFromTrainingSet(String query, int[] args) throws Exception
-	{
-		Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		List<MovieRating> ratings = new LinkedList<MovieRating>();
-		ResultSet result = null;
-
-		query = adaptQueryToCurrentKSet(query);
-		
-		try {
-			statement = connection.prepareStatement(query);
-			for(int i = 0; i<args.length; i++) statement.setInt(i+1, args[i]);
-			result = statement.executeQuery();
-
-			while (result.next()) {
-				MovieRating rating = new MovieRating(
-						result.getInt("userID"),
-						result.getInt("movieID"),
-						result.getLong("timestamp"),
-						result.getFloat("rating")
-				);
-				ratings.add(rating);
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
-			}
-		}
-		
-		return ratings;
-	}
-	
 	
 	
 	/**
@@ -148,7 +106,7 @@ public class KSetRepository extends Repository implements IKSetRepository {
 		PreparedStatement statement = null;
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
 		ResultSet result = null;
-		String query = "SELECT * FROM numbered_user_ratedmovies WHERE N>? AND N<=?";
+		String query = "SELECT * FROM testset";
 
 		int ksetsize = this.MovieRatingCount / this.K;
 		int startrowindex = ksetsize*this.CurrentSetIndex;
@@ -157,8 +115,6 @@ public class KSetRepository extends Repository implements IKSetRepository {
 		
 		try {
 			statement = connection.prepareStatement(query);
-			statement.setInt(1, startrowindex);
-			statement.setInt(2, startrowindex+ksetsize);
 			result = statement.executeQuery();
 
 			while (result.next()) {
