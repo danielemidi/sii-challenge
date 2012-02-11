@@ -9,10 +9,8 @@ import org.apache.mahout.cf.taste.impl.common.FastIDSet;
 import org.apache.mahout.cf.taste.impl.common.LongPrimitiveIterator;
 
 /**
- * <p>
  * Implementations represent a repository of information about users and their associated {@link Preference}s
- * for items.
- * </p>
+ * for items. 
  */
 public interface DataModel extends Refreshable, Serializable {
   

@@ -63,6 +63,8 @@ public class ALSWRFactorizer extends AbstractFactorizer {
 			this.numFeatures = factorizer.numFeatures;
 			Random random = RandomUtils.getRandom();
 			M = new double[this.dataModel.getNumItems()][this.numFeatures];
+			
+			//permette di iterare sulla collezione di id di item restituiti dal metodo getItemIDs, bypassabile se tramite query ce li facciamo restituire
 			LongPrimitiveIterator itemIDsIterator = this.dataModel.getItemIDs();
 			while (itemIDsIterator.hasNext()) {
 				long itemID = itemIDsIterator.nextLong();
@@ -115,9 +117,13 @@ public class ALSWRFactorizer extends AbstractFactorizer {
 		}
 	}
 
+	
+	// il metodo che ci serve come dicevi te
 	@Override
 	public Factorization factorize() throws TasteException {
 		log.info("starting to compute the factorization...");
+		
+		// è la classe che fa i calcoli intermedi come Ai = MiIi * t(MiIi) + lambda * nui * E scritti sul paper -> indispensabile 
 		final AlternateLeastSquaresSolver solver = new AlternateLeastSquaresSolver();
 		final Features features = new Features(this);
 
@@ -125,7 +131,10 @@ public class ALSWRFactorizer extends AbstractFactorizer {
 			log.info("iteration {}", iteration);
 
 			/* fix M - compute U */
+			//credo tu sappia a che serva è roba di concorrente
 			ExecutorService queue = createQueue();
+			
+			//permette di iterare sulla collezione di id di item restituiti dal metodo getItemIDs, bypassabile se tramite query ce li facciamo restituire			
 			LongPrimitiveIterator userIDsIterator = dataModel.getUserIDs();
 			try {
 				while (userIDsIterator.hasNext()) {
