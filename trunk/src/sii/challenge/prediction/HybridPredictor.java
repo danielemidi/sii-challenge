@@ -1,6 +1,7 @@
 package sii.challenge.prediction;
 
 import sii.challenge.domain.*;
+import sii.challenge.repository.IRepository;
 
 public class HybridPredictor implements IPredictor {
 
@@ -11,9 +12,9 @@ public class HybridPredictor implements IPredictor {
 	private ItemBasedPredictor itembp;
 	
 	// farci passare matrice, lista user e lista movie e passarle agli oggetti che creo
-	public HybridPredictor(TrainingDataset trainingdataset)
+	public HybridPredictor(IRepository repository)
 	{
-		this.userbp = new UserBasedPredictor(trainingdataset);
+		this.userbp = new UserBasedPredictor(repository);
 		//this.itembp = new ItemBasedPredictor(trainingdataset);
 		
 		this.userbasedpredictionweight = .5F;
