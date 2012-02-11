@@ -35,6 +35,7 @@ public class ALSWRFactorizer extends AbstractFactorizer {
 	/** number of iterations */
 	private final int numIterations;
 
+	// è un logger utile durante le iterazioni per mostrare i passi... non ce ne frega nulla
 	private static final Logger log = LoggerFactory.getLogger(ALSWRFactorizer.class);
 
 	public ALSWRFactorizer(DataModel dataModel, int numFeatures, double lambda, int numIterations) throws Exception {
@@ -45,6 +46,10 @@ public class ALSWRFactorizer extends AbstractFactorizer {
 		this.numIterations = numIterations;
 	}
 
+	/**
+	 * questa classe è necessaria per la definizione delle feature !!!!!!
+	 * */
+	
 	static class Features {
 
 		private final DataModel dataModel;
