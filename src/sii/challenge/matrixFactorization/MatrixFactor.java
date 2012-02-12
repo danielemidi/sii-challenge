@@ -24,6 +24,7 @@ public class MatrixFactor {
 	final static float alpha = 0.0002F;
 	final static float beta = 0.02F;
 			
+	//Regularization parameters
 	public static List<Matrix> matrixFactorization(Matrix R, Matrix P, Matrix Q, int K,int step, float alpha, float beta) {
 		
 		List<Matrix> feature = new LinkedList<Matrix>();
@@ -49,7 +50,7 @@ public class MatrixFactor {
 							Q.set(k, j, qkj);
 						}	
 					}
-			
+			// non ne ho compreso il motivo della sua esistenza!
 			eR = dot(P,Q);
 	        double e = 0;
 	        for(int i=0; i<R.getRowDimension(); i++ )
