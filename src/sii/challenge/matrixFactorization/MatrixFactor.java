@@ -37,7 +37,7 @@ public class MatrixFactor {
 				for(int j=0; j<R.getColumnDimension(); j++ )
 				
 					if(R.get(i, j)>0){
-						dotVal = dot(P.getMatrix(i, i, 0, K),Q.getMatrix(0, K, j, j)).get(0, 0);
+						dotVal = dot(P.getMatrix(i, i, 0, colP-1),Q.getMatrix(0, rowsQ-1, j, j)).get(0, 0);
 						eij = R.get(i, j) - dotVal;	
 						for(int k=0; k<K; k++){
 							double pik = P.get(i,k);
@@ -54,7 +54,7 @@ public class MatrixFactor {
 	        for(int i=0; i<R.getRowDimension(); i++ )
 				for(int j=0; j<R.getColumnDimension(); j++ )
 					if(R.get(i,j)>0){
-						dotVal = dot(P.getMatrix(i, i, 0, K),Q.getMatrix(0, K, j, j)).get(0, 0);
+						dotVal = dot(P.getMatrix(i, i, 0, K-1),Q.getMatrix(0, K-1, j, j)).get(0, 0);
 						e = e + Math.pow(R.get(i,j) - dotVal, 2);			                    
 						for(int k=0; k<K; k++)		                    	      
 							e = e + (beta/2) * ( Math.pow(P.get(i,k),2) + Math.pow(Q.get(k,j),2));
@@ -138,14 +138,14 @@ public class MatrixFactor {
 		
 		Matrix P = Matrix.random(U,K);
 		Matrix Q = Matrix.random(M,K);
-		Matrix dotVal = null;
-		for(int i=0; i<R.getRowDimension(); i++ )
-			for(int j=0; j<R.getColumnDimension(); j++ ){
-				dotVal = R.getMatrix(i, i, 0,j);
-				printMatrix(dotVal);
-			}
-				
-//		List<Matrix> matrixs = matrixFactorization(R, P, Q, K, steps, alpha, beta);
+//		Matrix dotVal = null;
+//		for(int i=0; i<R.getRowDimension(); i++ )
+//			for(int j=0; j<R.getColumnDimension(); j++ ){
+//				dotVal = R.getMatrix(i, i, 0,j);
+//				printMatrix(dotVal);
+//			}
+//				
+		List<Matrix> matrixs = matrixFactorization(R, P, Q, K, steps, alpha, beta);
 				
 /*		
 		Matrix x = R.getMatrix(0, 0, 0, 3);
