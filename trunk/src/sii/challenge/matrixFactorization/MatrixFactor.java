@@ -20,34 +20,55 @@ public class MatrixFactor {
 		    the final matrices P and Q
 	 */
 	
-	final int steps = 5000;
-	final float alpha = 0.0002F;
-	final float beta = 0.02F;
+	final static int steps = 5000;
+	final static float alpha = 0.0002F;
+	final static float beta = 0.02F;
 			
-	public List<Matrix> matrixFactorization(Matrix R, Matrix P, Matrix Q, int step, float alpha, float beta) {
+	public static List<Matrix> matrixFactorization(Matrix R, Matrix P, Matrix Q, int K,int step, float alpha, float beta) {
 		
 		List<Matrix> feature = new LinkedList<Matrix>();
-		Matrix QT = Q.transpose();
-		int eij;
+		Q = Q.transpose();
+		double eij, dotVal;
+		Matrix eR;
+		int colP = P.getColumnDimension();
+		int rowsQ = Q.getRowDimension();
 		for(int s=0; s<step ; s++ ){
-			for(int i=0; i<R.getRowDimension() ; i++ ){
-				for(int j=0; j<R.getColumnDimension() ; j++ ){
+			for(int i=0; i<R.getRowDimension(); i++ )
+				for(int j=0; j<R.getColumnDimension(); j++ )
+				
 					if(R.get(i, j)>0){
-						
-						eij = R.get(i, j) - ;
-						
-						
+						dotVal = dot(P.getMatrix(i, i, 0, K),Q.getMatrix(0, K, j, j)).get(0, 0);
+						eij = R.get(i, j) - dotVal;	
+						for(int k=0; k<K; k++){
+							double pik = P.get(i,k);
+							double qkj = Q.get(k,j);
+							pik = pik + alpha * (2 * eij * qkj - beta * pik);
+							P.set(i, k, pik); 
+							qkj = qkj + alpha * (2 * eij * P.get(i,k) - beta * qkj);
+							Q.set(k, j, qkj);
+						}	
 					}
-				}
-			}
-
 			
+			eR = dot(P,Q);
+	        double e = 0;
+	        for(int i=0; i<R.getRowDimension(); i++ )
+				for(int j=0; j<R.getColumnDimension(); j++ )
+					if(R.get(i,j)>0){
+						dotVal = dot(P.getMatrix(i, i, 0, K),Q.getMatrix(0, K, j, j)).get(0, 0);
+						e = e + Math.pow(R.get(i,j) - dotVal, 2);			                    
+						for(int k=0; k<K; k++)		                    	      
+							e = e + (beta/2) * ( Math.pow(P.get(i,k),2) + Math.pow(Q.get(k,j),2));
+			                    
+					}
+			 		
+	        if(e < 0.001){
+	        	Q= Q.transpose();
+	        	feature.add(P);
+	        	feature.add(Q);
+	        	break;
+	        }
 		}
-		
-		if(e<0.001)
-	        break;
-		
-		
+				
 		return feature;
 	}
 	
@@ -55,6 +76,7 @@ public class MatrixFactor {
 //	def matrix_factorization(R, P, Q, K, steps=5000, alpha=0.0002, beta=0.02):
 //	    Q = Q.T
 //	    for step in xrange(steps):
+
 //	        for i in xrange(len(R)):
 //	            for j in xrange(len(R[i])):
 //	                if R[i][j] > 0:
@@ -62,6 +84,7 @@ public class MatrixFactor {
 //	                    for k in xrange(K):
 //	                        P[i][k] = P[i][k] + alpha * (2 * eij * Q[k][j] - beta * P[i][k])
 //	                        Q[k][j] = Q[k][j] + alpha * (2 * eij * P[i][k] - beta * Q[k][j])
+
 //	        eR = numpy.dot(P,Q)
 //	        e = 0
 //	        for i in xrange(len(R)):
@@ -78,28 +101,27 @@ public class MatrixFactor {
 	
 	
 /*
- if __name__ == "__main__":
-    R = [
-         [5,3,0,1],
-         [4,0,0,1],
-         [1,1,0,5],
-         [1,0,0,4],
-         [0,1,5,4],
-        ]
-
-    R = numpy.array(R)
-
-    N = len(R)
-    M = len(R[0])
-    K = 2
-
-    P = numpy.random.rand(N,K)
-    Q = numpy.random.rand(M,K)
-
+ 
     nP, nQ = matrix_factorization(R, P, Q, K)
  	nR = numpy.dot(nP, nQ.T)
  
  */
+	
+	public static Matrix dot(Matrix P, Matrix Q){
+		return P.times(Q);
+	}
+	
+	public static void printMatrix(Matrix R)
+	{	
+		for(int i=0; i<R.getRowDimension(); i++){
+			for(int j=0; j<R.getColumnDimension(); j++)
+				System.out.print(R.get(i, j)+ " ");
+			System.out.println();
+		}
+		System.out.println();
+		System.out.println();
+	}
+
 	public static void main(String[] args){
 		double[][] value = {
 	         {5,3,0,1},
@@ -110,7 +132,34 @@ public class MatrixFactor {
 		};
 		
 		Matrix R = new Matrix(value);
-		Matrix RT = R.transpose();
+		int U = R.getRowDimension();
+		int	M = R.getColumnDimension();
+		int K = 2;
+		
+		Matrix P = Matrix.random(U,K);
+		Matrix Q = Matrix.random(M,K);
+		Matrix dotVal = null;
+		for(int i=0; i<R.getRowDimension(); i++ )
+			for(int j=0; j<R.getColumnDimension(); j++ ){
+				dotVal = R.getMatrix(i, i, 0,j);
+				printMatrix(dotVal);
+			}
+				
+//		List<Matrix> matrixs = matrixFactorization(R, P, Q, K, steps, alpha, beta);
+				
+/*		
+		Matrix x = R.getMatrix(0, 0, 0, 3);
+		Matrix y = R.getMatrix(0, 3, 0, 0);
+		
+		for(int i=0; i<R.getRowDimension(); i++){
+			for(int j=0; j<R.getColumnDimension(); j++)
+				System.out.print(R.get(i, j)+ " ");
+			System.out.println();
+			
+		}
+		R = R.transpose();
+
+		System.out.println();System.out.println();
 		for(int i=0; i<R.getRowDimension(); i++){
 			for(int j=0; j<R.getColumnDimension(); j++)
 				System.out.print(R.get(i, j)+ " ");
@@ -118,16 +167,43 @@ public class MatrixFactor {
 			
 		}
 		
+		R=R.transpose();
+		
 		System.out.println();System.out.println();
-		for(int i=0; i<RT.getRowDimension(); i++){
-			for(int j=0; j<RT.getColumnDimension(); j++)
-				System.out.print(RT.get(i, j)+ " ");
+		for(int i=0; i<R.getRowDimension(); i++){
+			for(int j=0; j<R.getColumnDimension(); j++)
+				System.out.print(R.get(i, j)+ " ");
 			System.out.println();
 			
 		}
 		
-		System.out.println("\n done");
+		for(int i=0; i<x.getRowDimension(); i++){
+			for(int j=0; j<x.getColumnDimension(); j++)
+				System.out.print(x.get(i, j)+ " ");
+			System.out.println();
+			
+		}
+
+	
+		for(int i=0; i<y.getRowDimension(); i++){
+			for(int j=0; j<y.getColumnDimension(); j++)
+				System.out.print(y.get(i, j)+ " ");
+			System.out.println();
+			
+		}
+		Matrix z = dot(x,y);
 		
+		System.out.println();System.out.println();
+		for(int i=0; i<z.getRowDimension(); i++){
+			for(int j=0; j<z.getColumnDimension(); j++)
+				System.out.print(z.get(i, j)+ " ");
+			System.out.println();
+			
+		}
+
+		
+		System.out.println("\ndone");
+*/		
 		
 	}
 	
