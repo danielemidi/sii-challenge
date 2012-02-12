@@ -1,5 +1,6 @@
 package sii.challenge.matrixFactorization;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import Jama.*;
@@ -23,10 +24,31 @@ public class MatrixFactor {
 	final float alpha = 0.0002F;
 	final float beta = 0.02F;
 			
-	public List<Matrix> matrixFactorization(Matrix R,Matrix P,Matrix Q, int step, float alpha, float beta) {
+	public List<Matrix> matrixFactorization(Matrix R, Matrix P, Matrix Q, int step, float alpha, float beta) {
+		
+		List<Matrix> feature = new LinkedList<Matrix>();
+		Matrix QT = Q.transpose();
+		int eij;
+		for(int s=0; s<step ; s++ ){
+			for(int i=0; i<R.getRowDimension() ; i++ ){
+				for(int j=0; j<R.getColumnDimension() ; j++ ){
+					if(R.get(i, j)>0){
+						
+						eij = R.get(i, j) - ;
+						
+						
+					}
+				}
+			}
+
+			
+		}
+		
+		if(e<0.001)
+	        break;
 		
 		
-		return null;
+		return feature;
 	}
 	
 //	
@@ -51,6 +73,65 @@ public class MatrixFactor {
 //	        if e < 0.001:
 //	            break
 //	    return P, Q.T
-//	    		
+//	    	
+
+	
+	
+/*
+ if __name__ == "__main__":
+    R = [
+         [5,3,0,1],
+         [4,0,0,1],
+         [1,1,0,5],
+         [1,0,0,4],
+         [0,1,5,4],
+        ]
+
+    R = numpy.array(R)
+
+    N = len(R)
+    M = len(R[0])
+    K = 2
+
+    P = numpy.random.rand(N,K)
+    Q = numpy.random.rand(M,K)
+
+    nP, nQ = matrix_factorization(R, P, Q, K)
+ 	nR = numpy.dot(nP, nQ.T)
+ 
+ */
+	public static void main(String[] args){
+		double[][] value = {
+	         {5,3,0,1},
+	         {4,0,0,1},
+	         {1,1,0,5},
+	         {1,0,0,4},
+	         {0,1,5,4},
+		};
+		
+		Matrix R = new Matrix(value);
+		Matrix RT = R.transpose();
+		for(int i=0; i<R.getRowDimension(); i++){
+			for(int j=0; j<R.getColumnDimension(); j++)
+				System.out.print(R.get(i, j)+ " ");
+			System.out.println();
+			
+		}
+		
+		System.out.println();System.out.println();
+		for(int i=0; i<RT.getRowDimension(); i++){
+			for(int j=0; j<RT.getColumnDimension(); j++)
+				System.out.print(RT.get(i, j)+ " ");
+			System.out.println();
+			
+		}
+		
+		System.out.println("\n done");
+		
+		
+	}
+	
+
+
 	
 }
