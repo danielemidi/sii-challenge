@@ -1,4 +1,4 @@
-package sii.challenge.domain;
+package sii.challenge.alswr;
 
 
 import java.io.Serializable;
