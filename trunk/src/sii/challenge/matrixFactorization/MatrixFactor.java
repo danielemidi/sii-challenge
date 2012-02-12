@@ -38,6 +38,7 @@ public class MatrixFactor {
 				
 					if(R.get(i, j)>0){
 						dotVal = dot(P.getMatrix(i, i, 0, colP-1),Q.getMatrix(0, rowsQ-1, j, j)).get(0, 0);
+						// eij è l'errore (!) ottenuto come differenza tra il rating reale e quello predetto!
 						eij = R.get(i, j) - dotVal;	
 						for(int k=0; k<K; k++){
 							double pik = P.get(i,k);
@@ -212,7 +213,7 @@ public class MatrixFactor {
 		int	M = R.getColumnDimension();
 		
 
-//		Matrix R1 = R.getMatrix(0, 3, 0, 2);
+//		Matrix R1 = R.getMatrix(0, 3, 0, 10);
 //		int U = R1.getRowDimension();
 //		int	M = R1.getColumnDimension();
 //		printMatrix(R1);
@@ -222,85 +223,32 @@ public class MatrixFactor {
 		
 		Matrix P = Matrix.random(U,K);
 		Matrix Q = Matrix.random(M,K);
-//		Matrix dotVal = null;
-//		for(int i=0; i<R.getRowDimension(); i++ )
-//			for(int j=0; j<R.getColumnDimension(); j++ ){
-//				dotVal = R.getMatrix(i, i, 0,j);
-//				printMatrix(dotVal);
-//			}
-//				
 		List<Matrix> matrixs = matrixFactorization(R, P, Q, K, steps, alpha, beta);
 		
+//		Matrix R2 = R.getMatrix(4, 15, 0, 10);
+//		printMatrix(R2);
+//		Matrix P2 = Matrix.random(R2.getRowDimension(),K);
+//		Matrix Q2 = Matrix.random(R2.getColumnDimension(),K);
+//		List<Matrix> matrixs2 = matrixFactorization(R2, P2, Q2, K, steps, alpha, beta);
+
 		
 		
 		Matrix nP = matrixs.get(0);
-		printMatrix(nP);
-		
+		printMatrix(nP); 
 		Matrix nQ = matrixs.get(1);
-		
 		nQ= nQ.transpose();
 		printMatrix(nQ);
-		
 		Matrix nR = dot(nP,nQ);
 		
+//		Matrix nP2 = matrixs2.get(0);
+//		Matrix nQ2 = matrixs2.get(1);
+//		nQ2= nQ2.transpose();
+//		Matrix nR2 = dot(nP2,nQ2);
+		
+		
 		printMatrix(nR);
-/*		
-		Matrix x = R.getMatrix(0, 0, 0, 3);
-		Matrix y = R.getMatrix(0, 3, 0, 0);
-		
-		for(int i=0; i<R.getRowDimension(); i++){
-			for(int j=0; j<R.getColumnDimension(); j++)
-				System.out.print(R.get(i, j)+ " ");
-			System.out.println();
-			
-		}
-		R = R.transpose();
+//		printMatrix(nR2);
 
-		System.out.println();System.out.println();
-		for(int i=0; i<R.getRowDimension(); i++){
-			for(int j=0; j<R.getColumnDimension(); j++)
-				System.out.print(R.get(i, j)+ " ");
-			System.out.println();
-			
-		}
-		
-		R=R.transpose();
-		
-		System.out.println();System.out.println();
-		for(int i=0; i<R.getRowDimension(); i++){
-			for(int j=0; j<R.getColumnDimension(); j++)
-				System.out.print(R.get(i, j)+ " ");
-			System.out.println();
-			
-		}
-		
-		for(int i=0; i<x.getRowDimension(); i++){
-			for(int j=0; j<x.getColumnDimension(); j++)
-				System.out.print(x.get(i, j)+ " ");
-			System.out.println();
-			
-		}
-
-	
-		for(int i=0; i<y.getRowDimension(); i++){
-			for(int j=0; j<y.getColumnDimension(); j++)
-				System.out.print(y.get(i, j)+ " ");
-			System.out.println();
-			
-		}
-		Matrix z = dot(x,y);
-		
-		System.out.println();System.out.println();
-		for(int i=0; i<z.getRowDimension(); i++){
-			for(int j=0; j<z.getColumnDimension(); j++)
-				System.out.print(z.get(i, j)+ " ");
-			System.out.println();
-			
-		}
-
-		
-		System.out.println("\ndone");
-*/		
 		
 		System.out.println("dimensioni matrice r:"+ U +" c:" +M);
 		System.out.println();
