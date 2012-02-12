@@ -62,14 +62,15 @@ public class MatrixFactor {
 					}
 			 		
 	        if(e < 0.001){
-	        	Q= Q.transpose();
-	        	feature.add(P);
-	        	feature.add(Q);
 	        	break;
 	        }
 		}
-				
-		return feature;
+		
+		Q= Q.transpose();
+    	feature.add(P);
+    	feature.add(Q);	
+		
+    	return feature;
 	}
 	
 //	
@@ -146,7 +147,16 @@ public class MatrixFactor {
 //			}
 //				
 		List<Matrix> matrixs = matrixFactorization(R, P, Q, K, steps, alpha, beta);
-				
+		System.out.println(matrixs.size());
+		Matrix nP = matrixs.get(0);
+		printMatrix(nP);
+		
+		Matrix nQ = matrixs.get(1);
+		printMatrix(nQ);
+		
+		Matrix nR = dot(nP,nQ);
+		
+		printMatrix(nR);
 /*		
 		Matrix x = R.getMatrix(0, 0, 0, 3);
 		Matrix y = R.getMatrix(0, 3, 0, 0);
