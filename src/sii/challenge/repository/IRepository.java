@@ -14,5 +14,8 @@ public interface IRepository {
 	float getSingleFloatValue(String query, Object[] args, Connection connection) throws Exception;
 
 	List<MovieRating> getMovieRatingList(String query, int[] args) throws Exception;
+
+	void write(String query, Object[] args) throws Exception;
+	void write(String query, Object[] args, Connection connection) throws Exception;
 	
 }

@@ -2,7 +2,7 @@ package sii.challenge.matrixFactorization;
 
 import java.util.List;
 
-import sii.challenge.repository.Repository;
+import sii.challenge.repository.*;
 
 import Jama.Matrix;
 
@@ -12,19 +12,18 @@ public class Main {
 
 	public static void main(String[] args){
 
+		MatrixFactorizationDataAdapter dataadapter = new MatrixFactorizationDataAdapter(new K3SetRepository());
+		
 		Matrix R = null;
 		try {
-			R = new MatrixFactorizationDataAdapter().readAndAdapt(new Repository());
+			R = dataadapter.readAndAdapt();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		int K = 2;
-		
-		//int U = R.getRowDimension();
-		//int M = R.getColumnDimension();
 
-		int blocksize = 100;
+		int blocksize = 50;
 		for(int blocki = 0; blocki < R.getRowDimension(); blocki+=blocksize) {
 			for(int blockj = 0; blockj < R.getColumnDimension(); blockj+=blocksize) {
 				Matrix SubR = R.getMatrix(blocki, blocki+blocksize-1, blockj, blockj+blocksize-1);
@@ -44,7 +43,15 @@ public class Main {
 				Matrix err = SubR.minus(nR);
 				MatrixFactorizer.printMatrix(err);
 				
-				System.out.println("Factorization complete.");
+				System.out.print("Factorization complete. Writing... ");
+				
+				try {
+					dataadapter.adaptAndWrite(nR, blocki);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				System.out.println("done.");
 			}
 		}		
 		

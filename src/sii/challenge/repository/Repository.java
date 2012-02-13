@@ -182,4 +182,38 @@ public class Repository implements IRepository {
 		return ratings;
 	}
 	
+	
+	
+
+	public void write(String query, Object[] args) throws Exception
+	{
+		this.write(query, args, this.persistentConnection);
+	}
+	public void write(String query, Object[] args, Connection connection) throws Exception
+	{
+		PreparedStatement statement = null;
+
+		try {
+			statement = connection.prepareStatement(query);
+			for(int i = 0; i<args.length; i++){
+				if(args[i].getClass().equals(Integer.class)) 
+					statement.setInt(i+1, (int)args[i]);
+				else if(args[i].getClass().equals(Long.class)) 
+					statement.setLong(i+1, (long)args[i]);
+				else if(args[i].getClass().equals(Float.class)) 
+					statement.setFloat(i+1, (float)args[i]);
+			}
+			
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			try {
+				if (statement != null) statement.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+	}
+	
 }
