@@ -95,43 +95,12 @@ public class KSetRepository extends Repository implements IKSetRepository {
 	}
 	
 	
-	public List<MovieRating> getMovieRatingListFromTrainingSet(String query, int[] args) throws Exception
-	{
-		Connection connection = this.dataSource.getConnection();
-		PreparedStatement statement = null;
-		List<MovieRating> ratings = new LinkedList<MovieRating>();
-		ResultSet result = null;
 
+	public List<MovieRating> getMovieRatingList(String query, int[] args) throws Exception
+	{
 		query = adaptQueryToCurrentKSet(query);
 		
-		try {
-			statement = connection.prepareStatement(query);
-			for(int i = 0; i<args.length; i++) statement.setInt(i+1, args[i]);
-			result = statement.executeQuery();
-
-			while (result.next()) {
-				MovieRating rating = new MovieRating(
-						result.getInt("userID"),
-						result.getInt("movieID"),
-						result.getLong("timestamp"),
-						result.getFloat("rating")
-				);
-				ratings.add(rating);
-			}
-		} catch (SQLException e) {
-			throw new Exception(e.getMessage());
-		} finally {
-			try {
-				if (statement != null)
-					statement.close();
-				if (connection != null)
-					connection.close();
-			} catch (SQLException e) {
-				throw new Exception(e.getMessage());
-			}
-		}
-		
-		return ratings;
+		return super.getMovieRatingList(query, args);
 	}
 	
 	
