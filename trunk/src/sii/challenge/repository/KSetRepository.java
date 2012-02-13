@@ -8,8 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sii.challenge.domain.MovieRating;
-import sii.challenge.domain.RatingMatrix;
-import sii.challenge.domain.TrainingDataset;
 import sii.challenge.util.DataSource;
 
 public class KSetRepository extends Repository implements IKSetRepository {

@@ -1,6 +1,6 @@
 package sii.challenge;
 
-import sii.challenge.testing.MAETester;
+import sii.challenge.testing.CrossValidator;
 
 /**
  * 
@@ -17,8 +17,11 @@ public class Main {
 	public static void main(String[] args) {
 		System.out.println("Starting Main...");
 		
-		MAETester maetester = new MAETester();
-		maetester.runTest();
+		CrossValidator crossvalidator = new CrossValidator();
+		
+		System.out.println("Starting CrossValidation...");
+		float mae = crossvalidator.runTest();
+		System.out.println("Cross Validator returned MAE " + mae);
 		
 	}
 
