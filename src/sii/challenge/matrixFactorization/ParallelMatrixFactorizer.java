@@ -26,7 +26,7 @@ public class ParallelMatrixFactorizer implements Runnable {
 		int blocksize = 50;
 		for(int blocki = 0, i = 0; blocki < R.getRowDimension(); blocki+=blocksize, i++) {
 			if((i%2==0) && doEvenRows) {
-				for(int blockj = 50, j = 0; blockj < R.getColumnDimension(); blockj+=blocksize, j++) {
+				for(int blockj = 0, j = 0; blockj < R.getColumnDimension(); blockj+=blocksize, j++) {
 					if((j%2==0) && doEvenCols) {
 						Matrix SubR = R.getMatrix(blocki, blocki+blocksize-1, blockj, blockj+blocksize-1);
 						int U = SubR.getRowDimension();
