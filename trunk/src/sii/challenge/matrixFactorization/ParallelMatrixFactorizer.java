@@ -1,6 +1,7 @@
 package sii.challenge.matrixFactorization;
 
 import java.util.List;
+import java.util.Map;
 
 import sii.challenge.repository.K3SetRepository;
 
@@ -8,31 +9,38 @@ import Jama.Matrix;
 
 public class ParallelMatrixFactorizer implements Runnable {
 	
+	private String taskid;
+	
 	private Matrix R;
 	private boolean doEvenRows;
 	private boolean doEvenCols;
+	private MatrixFactorizationDataAdapter dataadapter;
 	
-	public ParallelMatrixFactorizer(Matrix R, boolean doEvenRows, boolean doEvenCols) {
+	public ParallelMatrixFactorizer(Matrix R, boolean doEvenRows, boolean doEvenCols, Map<Integer, Integer> i2user, Map<Integer, Integer> j2movie) {
 		this.R = R;
 		this.doEvenRows = doEvenRows;
 		this.doEvenCols = doEvenCols;
+		this.dataadapter = new MatrixFactorizationDataAdapter(new K3SetRepository());
+		this.dataadapter.setI2user(i2user);
+		this.dataadapter.setJ2movie(j2movie);
+		
+		this.taskid = "["+(doEvenRows?"P":"D") + (doEvenCols?"P":"D")+"]"; 
 	}
 	
 	public void factorize() throws Exception {
 		int K = 2;
-		
-		MatrixFactorizationDataAdapter dataadapter = new MatrixFactorizationDataAdapter(new K3SetRepository());
 
 		int blocksize = 50;
 		for(int blocki = 0, i = 0; blocki < R.getRowDimension(); blocki+=blocksize, i++) {
 			if((i%2==0) && doEvenRows) {
 				for(int blockj = 0, j = 0; blockj < R.getColumnDimension(); blockj+=blocksize, j++) {
-					if((j%2==0) && doEvenCols) {
+					if((j%2==0) && doEvenCols && !isAlreadyFactorized(blocki, blockj)) {
+						
 						Matrix SubR = R.getMatrix(blocki, blocki+blocksize-1, blockj, blockj+blocksize-1);
 						int U = SubR.getRowDimension();
 						int	M = SubR.getColumnDimension();
 						
-						System.out.println("Starting factorization for submatrix "+blocki+","+blockj+"...");
+						System.out.println(this.taskid+" Starting factorization for submatrix "+blocki+","+blockj+"...");
 						Matrix P = Matrix.random(U,K);
 						Matrix Q = Matrix.random(M,K);
 						List<Matrix> matrixs = MatrixFactorizer.factorize(SubR, P, Q, K, MatrixFactorizer.steps, MatrixFactorizer.alpha, MatrixFactorizer.beta);
@@ -42,10 +50,10 @@ public class ParallelMatrixFactorizer implements Runnable {
 						nQ = nQ.transpose();
 						Matrix nR = MatrixFactorizer.dot(nP,nQ);
 						
-						Matrix err = SubR.minus(nR);
-						MatrixFactorizer.printMatrix(err);
+						//Matrix err = SubR.minus(nR);
+						//MatrixFactorizer.printMatrix(err);
 						
-						System.out.print("Factorization complete. Writing... ");
+						System.out.print(this.taskid+" Factorization complete. Writing... ");
 		
 						dataadapter.adaptAndWrite(nR, blocki, blockj);
 						
@@ -56,6 +64,18 @@ public class ParallelMatrixFactorizer implements Runnable {
 		}	
 	}
 
+	
+	/**
+	 * Verifica se una certa sottomatrice è già stato fattorizzata in precedenza
+	 * @throws Exception 
+	 * 
+	 */
+	private boolean isAlreadyFactorized(int blocki, int blockj) throws Exception {
+		int userID = this.dataadapter.getI2user().get(blocki);
+		int movieID = this.dataadapter.getJ2movie().get(blockj);
+		return this.dataadapter.getRepository().getSingleFloatValue("SELECT COUNT(*) FROM predictionmatrix WHERE userID=? AND movieID=?", new int[]{ userID, movieID }) != 0;
+	}
+	
 	
 	@Override
 	public void run() {

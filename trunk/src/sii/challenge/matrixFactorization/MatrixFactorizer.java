@@ -37,7 +37,7 @@ public class MatrixFactorizer {
 			for(int i=0; i<R.getRowDimension(); i++ ) {
 				for(int j=0; j<R.getColumnDimension(); j++ ) {
 					
-					System.out.print(".");
+					//System.out.print(".");
 			
 					if(R.get(i, j)>0){
 						dotVal = dot(P.getMatrix(i, i, 0, colP-1),Q.getMatrix(0, rowsQ-1, j, j)).get(0, 0);
@@ -54,7 +54,7 @@ public class MatrixFactorizer {
 					}
 				}
 
-				System.out.println();
+				//System.out.println();
 			}
 			// non ne ho compreso il motivo della sua esistenza!
 			//eR = dot(P,Q);

@@ -13,8 +13,6 @@ import sii.challenge.repository.IRepository;
  */
 public class MatrixFactorizationDataAdapter {
 	
-	Map<Integer, Integer> movie2j = new HashMap<Integer, Integer>();
-	Map<Integer, Integer> user2i = new HashMap<Integer, Integer>();
 	Map<Integer, Integer> j2movie = new HashMap<Integer, Integer>();
 	Map<Integer, Integer> i2user = new HashMap<Integer, Integer>();
 	
@@ -24,7 +22,40 @@ public class MatrixFactorizationDataAdapter {
 		this.repository=repository;
 	}
 	
+	
+	
+	
+	
+	public IRepository getRepository() {
+		return repository;
+	}
+	public void setRepository(IRepository repository) {
+		this.repository = repository;
+	}
+
+	public Map<Integer, Integer> getJ2movie() {
+		return j2movie;
+	}
+	public void setJ2movie(Map<Integer, Integer> j2movie) {
+		this.j2movie = j2movie;
+	}
+
+	public Map<Integer, Integer> getI2user() {
+		return i2user;
+	}
+	public void setI2user(Map<Integer, Integer> i2user) {
+		this.i2user = i2user;
+	}
+
+
+
+
+
 	public Matrix readAndAdapt() throws Exception {
+
+		Map<Integer, Integer> movie2j = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> user2i = new HashMap<Integer, Integer>();
+		
 		int usercount = (int)repository.getSingleFloatValue("SELECT COUNT(DISTINCT userID) FROM user_ratedmovies", new int[]{});
 		//int moviecount = (int)repository.getSingleFloatValue("SELECT COUNT(DISTINCT movieID) FROM user_ratedmovies", new int[]{});
 		int moviecount = (int)repository.getSingleFloatValue("SELECT COUNT(*) FROM movies", new int[]{});
