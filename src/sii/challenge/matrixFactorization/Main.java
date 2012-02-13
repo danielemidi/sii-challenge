@@ -29,7 +29,7 @@ public class Main {
 		ExecutorService pool = Executors.newFixedThreadPool(4);
 		for(int i = 0; i<2; i++)
 			for(int j = 0; j<2; j++)
-				tasks.add(pool.submit(new ParallelMatrixFactorizer(R, i%2==0, j%2==0)));
+				tasks.add(pool.submit(new ParallelMatrixFactorizer(R, i%2==0, j%2==0, dataadapter.i2user, dataadapter.j2movie)));
 		
 		for(Future<?> t : tasks) {
 			t.get();
