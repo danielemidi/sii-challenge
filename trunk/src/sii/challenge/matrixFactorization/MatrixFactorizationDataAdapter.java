@@ -26,7 +26,8 @@ public class MatrixFactorizationDataAdapter {
 	
 	public Matrix readAndAdapt() throws Exception {
 		int usercount = (int)repository.getSingleFloatValue("SELECT COUNT(DISTINCT userID) FROM user_ratedmovies", new int[]{});
-		int moviecount = (int)repository.getSingleFloatValue("SELECT COUNT(DISTINCT movieID) FROM user_ratedmovies", new int[]{});
+		//int moviecount = (int)repository.getSingleFloatValue("SELECT COUNT(DISTINCT movieID) FROM user_ratedmovies", new int[]{});
+		int moviecount = (int)repository.getSingleFloatValue("SELECT COUNT(*) FROM movies", new int[]{});
 		
 		List<MovieRating> ratings = repository.getMovieRatingList("SELECT * from user_ratedmovies", new int[]{});
 
@@ -62,11 +63,11 @@ public class MatrixFactorizationDataAdapter {
 	}
 	
 	
-	public void adaptAndWrite(Matrix matrix, int offset) throws Exception {
+	public void adaptAndWrite(Matrix matrix, int offseti, int offsetj) throws Exception {
 		String query = "INSERT INTO predictionmatrix (userID, movieID, rating) VALUES (?,?,?)";
-		for(int i = offset; i<matrix.getRowDimension()+offset; i++)
-			for(int j = offset; j<matrix.getColumnDimension()+offset; j++)
-				this.repository.write(query, new Object[]{ i, j, matrix.get(i, j) });
+		for(int i = offseti; i<matrix.getRowDimension()+offseti; i++)
+			for(int j = offsetj; j<matrix.getColumnDimension()+offsetj; j++)
+				this.repository.write(query, new Object[]{ i2user.get(i), j2movie.get(j), matrix.get(i-offseti, j-offsetj) });
 	}
 	
 }

@@ -28,9 +28,10 @@ public class Recommender {
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		this.predictors = new IPredictor[]{
-			new DumbUserPredictor(repository)
-			,new ItemTagBasedPredictor(repository)
-			,new ItemGenreBasedPredictor(repository)
+			new MatrixFactorizedPredictor(repository)
+			//,new DumbUserPredictor(repository)
+			//,new ItemTagBasedPredictor(repository)
+			//,new ItemGenreBasedPredictor(repository)
 			,new SimpleBiasPredictor(repository)
 			//,new SimpleTimeDependentBiasPredictor(repository)
 		};
@@ -49,6 +50,8 @@ public class Recommender {
 		float exp;
 		float p;
 		float roundedpred;
+		float err;
+		float totalerror = 0;
 		
 		for(int pi = 0; pi<this.predictors.length; pi++)
 			System.out.print(this.predictors[pi].getClass().getSimpleName() + "\t");
@@ -70,22 +73,17 @@ public class Recommender {
 				p += this.predictions[pi];
 			}
 			
-			p /= this.predictors.length; // predizione totale come media aritmetica delle predizioni
+			//p /= this.predictors.length; // predizione totale come media aritmetica delle predizioni
+			p=this.predictions[0]>0 ? this.predictions[0] : this.predictions[1];
 			p = .5F*Math.round(p/.5);
 
-			System.out.println("]=> P: " + p + "\tERR: " + Math.abs(exp-p));
+			err = Math.abs(exp-p);
+			totalerror += err;
 			
-			if(p<0) throw new Exception("Prediction is less then zero.");
-						
-			/*float perr = Math.abs(exp-p1);
-			float ferr = Math.abs(exp-f);
-			if(perr<ferr){
-				System.out.println(i + "/" + c + ": \tP:"+perr+" *\t\tF:"+ferr + (p1missing?"\t\t!":""));
-				pc++;
-			}else{
-				System.out.println(i + "/" + c + ": \tP:"+perr+"  \t\tF:"+ferr + " *" + (p1missing?"\t\t!":""));
-				fc++;
-			}*/
+			System.out.println("]=> P: " + p + "\tERR: " + err + "\tMAE: " + totalerror/i);
+			
+			//if(p<0) throw new Exception("Prediction is less then zero.");
+			if(p<0) p = .5F;
 			
 			MovieRating pmr = new MovieRating(
 				mr.getUserId(), 
