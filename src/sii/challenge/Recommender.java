@@ -28,7 +28,7 @@ public class Recommender {
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		this.predictors = new IPredictor[]{
-			new MatrixFactorizedPredictor(repository)
+			new MatrixFactorizationPredictor(repository)
 			//,new DumbUserPredictor(repository)
 			//,new ItemTagBasedPredictor(repository)
 			//,new ItemGenreBasedPredictor(repository)
