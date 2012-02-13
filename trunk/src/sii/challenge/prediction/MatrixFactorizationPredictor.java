@@ -7,11 +7,11 @@ import sii.challenge.repository.IRepository;
  * @author Daniele
  *
  */
-public class MatrixFactorizedPredictor implements IPredictor {
+public class MatrixFactorizationPredictor implements IPredictor {
 
 	private final IRepository repository;
 	
-	public MatrixFactorizedPredictor(IRepository repository)
+	public MatrixFactorizationPredictor(IRepository repository)
 	{
 		this.repository = repository;
 	}
