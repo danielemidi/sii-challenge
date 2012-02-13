@@ -1,6 +1,10 @@
 package sii.challenge.matrixFactorization;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import sii.challenge.repository.*;
 
@@ -10,7 +14,7 @@ public class Main {
 	
 
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws Exception{
 
 		MatrixFactorizationDataAdapter dataadapter = new MatrixFactorizationDataAdapter(new K3SetRepository());
 		
@@ -21,11 +25,25 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		int K = 2;
+		List<Future<?>> tasks = new ArrayList<Future<?>>(4);
+		ExecutorService pool = Executors.newFixedThreadPool(4);
+		for(int i = 0; i<2; i++)
+			for(int j = 0; j<2; j++)
+				tasks.add(pool.submit(new ParallelMatrixFactorizer(R, i%2==0, j%2==0)));
+		
+		for(Future<?> t : tasks) {
+			t.get();
+		}
+		
+		pool.shutdown();
+		
+		
+		
+		/*int K = 2;
 
 		int blocksize = 50;
 		for(int blocki = 0; blocki < R.getRowDimension(); blocki+=blocksize) {
-			for(int blockj = 0; blockj < R.getColumnDimension(); blockj+=blocksize) {
+			for(int blockj = 50; blockj < R.getColumnDimension(); blockj+=blocksize) {
 				Matrix SubR = R.getMatrix(blocki, blocki+blocksize-1, blockj, blockj+blocksize-1);
 				int U = SubR.getRowDimension();
 				int	M = SubR.getColumnDimension();
@@ -44,29 +62,12 @@ public class Main {
 				MatrixFactorizer.printMatrix(err);
 				
 				System.out.print("Factorization complete. Writing... ");
-				
-				try {
-					dataadapter.adaptAndWrite(nR, blocki);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+
+				dataadapter.adaptAndWrite(nR, blocki, blockj);
 				
 				System.out.println("done.");
 			}
-		}		
-		
-		/*Matrix nP = matrixs.get(0);
-		MatrixFactorizer.printMatrix(nP); 
-		Matrix nQ = matrixs.get(1);
-		nQ= nQ.transpose();
-		MatrixFactorizer.printMatrix(nQ);
-		Matrix nR = MatrixFactorizer.dot(nP,nQ);*/
-				
-		//MatrixFactorizer.printMatrix(nR);
-//		printMatrix(nR2);
-		
-		//System.out.println("dimensioni matrice r:"+ U +" c:" +M);
-		//System.out.println();
+		}		*/
 	}
 
 	

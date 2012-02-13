@@ -202,6 +202,8 @@ public class Repository implements IRepository {
 					statement.setLong(i+1, (long)args[i]);
 				else if(args[i].getClass().equals(Float.class)) 
 					statement.setFloat(i+1, (float)args[i]);
+				else if(args[i].getClass().equals(Double.class)) 
+					statement.setDouble(i+1, (double)args[i]);
 			}
 			
 			statement.executeUpdate();
