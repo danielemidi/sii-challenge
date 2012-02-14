@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,11 +39,10 @@ public class IOFile {
 		return movieRatingList;
 	}
 	
-	public static void scriviOutputFile(List<MovieRating> movieRatings) throws Exception{
+	public static void scriviOutputFile(List<MovieRating> movieRatings, String fileOutPut) throws Exception{
 		
-			  //Lo crea nella stessa cartella del progetto!
-			  String file_name = "file_out.dat";
-			  File file = new File(file_name);
+			  
+			  File file = new File(fileOutPut);
 			  boolean exist = file.createNewFile();
 			  if (!exist)
 			  {
@@ -51,7 +51,7 @@ public class IOFile {
 			  }
 			  else
 			  {
-				  FileWriter fstream = new FileWriter(file_name);
+				  FileWriter fstream = new FileWriter(fileOutPut);
 				  BufferedWriter out = new BufferedWriter(fstream);
 				  for(MovieRating mr : movieRatings){
 					  out.write(mr.getUserId()+"\t"+mr.getMovieId()+"\t"+mr.getTimestamp()+"\t"+mr.getRating()+"\n");
@@ -64,9 +64,19 @@ public class IOFile {
 
 	
 	public static void main(String[] args) throws Exception{
-		List<MovieRating> list = leggirigasplit("C:/Users/Antedesk/Desktop/Challenge/ChallengeDataset/user_ratedmovies.dat");
-		System.out.println("done");
-		scriviOutputFile(list);
+	
+		//"C:/Users/Antedesk/Desktop/Challenge/ChallengeDataset/user_ratedmovies.dat
+		String fileInPut = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+		
+		//"C:/Users/Antedesk/Desktop/fileoutpu.dat
+		System.out.print("Inserire percorso di destinazione del file di output seguito dal nome: ");
+		String fileOutPut = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+		
+		List<MovieRating> list = leggirigasplit(fileInPut);
+	
+		scriviOutputFile(list,fileOutPut);
+	
+		System.out.println("Grazie per aver usato il nostro sistema di raccomandazione \n A presto.");
 	}
 
 
