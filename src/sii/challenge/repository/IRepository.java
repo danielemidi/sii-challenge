@@ -18,4 +18,5 @@ public interface IRepository {
 	void write(String query, Object[] args) throws Exception;
 	void write(String query, Object[] args, Connection connection) throws Exception;
 	
+	List<Integer> getMovieIDs() throws Exception;
 }

@@ -62,12 +62,19 @@ public class MatrixFactorizationDataAdapter {
 		
 		List<MovieRating> ratings = repository.getMovieRatingList("SELECT * from user_ratedmovies", new int[]{});
 
-		int u = 0;
-		int m = 0;
 		
 		Matrix matrix = new Matrix(usercount, moviecount);
-		
+
 		int mi, ui;
+		List<Integer> movieIDs = repository.getMovieIDs();
+		for(int i = 0; i<movieIDs.size(); i++) {
+			int mid = movieIDs.get(i);
+			movie2j.put(mid, i);
+			j2movie.put(i, mid);
+		}
+
+		int u = 0;
+		//int m = 0;
 		for(MovieRating rating : ratings) {
 			
 			if(user2i.containsKey(rating.getUserId()))
@@ -78,14 +85,15 @@ public class MatrixFactorizationDataAdapter {
 				i2user.put(ui, rating.getUserId());
 				u++;
 			}
-			if(movie2j.containsKey(rating.getMovieId()))
+			/*if(movie2j.containsKey(rating.getMovieId()))
 				mi = movie2j.get(rating.getMovieId());
 			else{
 				mi = m;
 				movie2j.put(rating.getMovieId(), mi);
 				j2movie.put(mi, rating.getMovieId());
 				m++;
-			}
+			}*/
+			mi = movie2j.get(rating.getMovieId());
 			
 			matrix.set(ui, mi, rating.getRating());
 		}
@@ -95,10 +103,23 @@ public class MatrixFactorizationDataAdapter {
 	
 	
 	public void adaptAndWrite(Matrix matrix, int offseti, int offsetj) throws Exception {
-		String query = "INSERT INTO predictionmatrix (userID, movieID, rating) VALUES (?,?,?)";
-		for(int i = offseti; i<matrix.getRowDimension()+offseti; i++)
-			for(int j = offsetj; j<matrix.getColumnDimension()+offsetj; j++)
-				this.repository.write(query, new Object[]{ i2user.get(i), j2movie.get(j), matrix.get(i-offseti, j-offsetj) });
+		Object[] param = new Object[matrix.getRowDimension()*matrix.getRowDimension()*3];
+		StringBuilder query = new StringBuilder();
+		query.append("INSERT INTO predictionmatrix (userID, movieID, rating) VALUES");
+		for(int i = offseti, ri=0; i<matrix.getRowDimension()+offseti; i++, ri++)
+			for(int j = offsetj, rj=0; j<matrix.getColumnDimension()+offsetj; j++, rj++)
+			{
+				query.append(" (?,?,?),");
+				int baseparamindex = ((ri * matrix.getRowDimension()) + rj)*3;
+				param[baseparamindex] = i2user.get(i);
+				param[baseparamindex+1] = j2movie.get(j);
+				param[baseparamindex+2] = matrix.get(ri, rj);
+				//this.repository.write(query, new Object[]{ i2user.get(i), j2movie.get(j), matrix.get(i-offseti, j-offsetj) });
+			}
+		
+		String q = query.toString();
+		q = q.substring(0, q.length()-1);
+		this.repository.write(q, param);
 	}
 	
 }
