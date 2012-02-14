@@ -17,7 +17,7 @@ public class UserBasedPredictor implements IPredictor {
 		float p = 0;
 		try {
 			p = this.repository.getSingleFloatValue(
-										"SELECT SUM(URM.rating * (ISS.genres))/SUM(ISS.genres) FROM " +
+					"SELECT SUM(URM.rating * (ISS.genres))/SUM(ISS.genres) FROM " +
 					"(SELECT * FROM user_ratedmovies WHERE userID=? AND movieID<>?) URM " +
 					"JOIN " +
 					"(SELECT iditem2, similarity FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
