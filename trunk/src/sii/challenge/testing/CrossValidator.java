@@ -44,9 +44,10 @@ public class CrossValidator {
 			try {
 				System.out.println("\nCV - Current testset index = " + i + "...");
 				repository.setCurrentSetIndex(i);
-				Recommender recommender = new Recommender(repository);
+				TestRecommender recommender = new TestRecommender(repository);
 				System.out.println("CV - Loading testset...");
 				List<MovieRating> testset = repository.getTestSet();
+				Collections.shuffle(testset);
 
 				System.out.println("CV - Recommending...");
 				long start = System.currentTimeMillis();

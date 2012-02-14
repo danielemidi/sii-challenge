@@ -1,4 +1,4 @@
-package sii.challenge;
+package sii.challenge.testing;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,16 +17,16 @@ import sii.challenge.repository.IRepository;
  * - restituisce i risultati
  *
  */
-public class Recommender {
+public class TestRecommender {
 
 	private IPredictor[] predictors;
 	private float[] predictions;
 	private float[] predictorErrors;
 	private float[] predictorMAEs;
 	
-	public Recommender(IRepository repository)
+	public TestRecommender(IRepository repository)
 	{
-		/*System.out.println("R - Creating Predictor(s)...");
+		System.out.println("R - Creating Predictor(s)...");
 		this.predictors = new IPredictor[]{
 			new MatrixFactorizationPredictor(repository)
 			//,new DumbUserPredictor(repository)
@@ -37,13 +37,12 @@ public class Recommender {
 		};
 		this.predictions = new float[this.predictors.length];
 		this.predictorErrors = new float[this.predictors.length];
-		this.predictorMAEs = new float[this.predictors.length];*/
+		this.predictorMAEs = new float[this.predictors.length];
 	}
 	
 	public List<MovieRating> recommend(List<MovieRating> input) throws Exception
 	{
-		return null;
-		/*int i = 1;
+		int i = 1;
 		int c = input.size();
 		System.out.println("R - Recommending...");
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
@@ -68,7 +67,7 @@ public class Recommender {
 			{
 				this.predictions[pi] = this.predictors[pi].PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
 				roundedpred = .5F*Math.round(this.predictions[pi]/.5);
-				this.predictorErrors[pi] += Math.abs(exp-roundedpred);
+				this.predictorErrors[pi] += Math.abs(exp-roundedpred/*this.predictions[pi]*/);
 				this.predictorMAEs[pi] = this.predictorErrors[pi]/i;
 				System.out.printf("%1.1f|%5.1f|%1.8f\t", Math.abs(exp-roundedpred), this.predictorErrors[pi], this.predictorMAEs[pi]);
 				p += this.predictions[pi];
@@ -106,7 +105,7 @@ public class Recommender {
 		
 		System.out.println();
 		
-		return ratings;*/
+		return ratings;
 	}
 	
 	private void printStats(int i, int c, IPredictor p, float exp, float act)
