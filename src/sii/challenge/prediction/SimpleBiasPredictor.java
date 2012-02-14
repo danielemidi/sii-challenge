@@ -34,6 +34,7 @@ public class SimpleBiasPredictor implements IPredictor {
 			float itembias = movieavg>0 ? movieavg - this.overallAverageRating : 0;
 			
 			return this.overallAverageRating + userbias + itembias;
+			
 		} catch (Exception e) {
 			return 0;
 		}

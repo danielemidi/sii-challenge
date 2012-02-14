@@ -2,6 +2,7 @@ package sii.challenge;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import sii.challenge.domain.*;
 import sii.challenge.prediction.*;
@@ -17,33 +18,41 @@ import sii.challenge.repository.IRepository;
  * - restituisce i risultati
  *
  */
-public class Recommender {
+public class Recommender implements Callable<List<MovieRating>> {
 
+	private List<MovieRating> inputlist;
+	
 	private IPredictor[] predictors;
 	private float[] predictions;
 	private float[] predictorErrors;
 	private float[] predictorMAEs;
 	
+	public Recommender(IRepository repository, List<MovieRating> input) {
+		this(repository);
+		
+		this.inputlist = input;
+	}
+	
 	public Recommender(IRepository repository)
 	{
-		/*System.out.println("R - Creating Predictor(s)...");
+		System.out.println("R - Creating Predictor(s)...");
 		this.predictors = new IPredictor[]{
-			new MatrixFactorizationPredictor(repository)
+			new ExistingRatingPredictor(repository)
+			,new MatrixFactorizationPredictor(repository)
+			,new SimpleBiasPredictor(repository)
 			//,new DumbUserPredictor(repository)
 			//,new ItemTagBasedPredictor(repository)
 			//,new ItemGenreBasedPredictor(repository)
-			,new SimpleBiasPredictor(repository)
 			//,new SimpleTimeDependentBiasPredictor(repository)
 		};
 		this.predictions = new float[this.predictors.length];
 		this.predictorErrors = new float[this.predictors.length];
-		this.predictorMAEs = new float[this.predictors.length];*/
+		this.predictorMAEs = new float[this.predictors.length];
 	}
 	
 	public List<MovieRating> recommend(List<MovieRating> input) throws Exception
 	{
-		return null;
-		/*int i = 1;
+		int i = 1;
 		int c = input.size();
 		System.out.println("R - Recommending...");
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
@@ -74,8 +83,12 @@ public class Recommender {
 				p += this.predictions[pi];
 			}
 			
-			//p /= this.predictors.length; // predizione totale come media aritmetica delle predizioni
-			p=this.predictions[0]>0 ? this.predictions[0] : this.predictions[1];
+			// predizione totale
+			p = this.predictions[0] > 0 ? this.predictions[0] : ( 
+					this.predictions[1] > 0 ? this.predictions[1] : ( 
+						this.predictions[2]
+					)
+				);
 			p = .5F*Math.round(p/.5);
 
 			err = Math.abs(exp-p);
@@ -83,7 +96,6 @@ public class Recommender {
 			
 			System.out.println("]=> P: " + p + "\tERR: " + err + "\tMAE: " + totalerror/i);
 			
-			//if(p<0) throw new Exception("Prediction is less then zero.");
 			if(p<0) p = .5F;
 			
 			MovieRating pmr = new MovieRating(
@@ -106,16 +118,14 @@ public class Recommender {
 		
 		System.out.println();
 		
-		return ratings;*/
+		return ratings;
 	}
-	
-	private void printStats(int i, int c, IPredictor p, float exp, float act)
-	{
-		System.out.println("\t" + i + "/" + c + "; " +
-						   "Predictor: " + p.getClass().getName() + "; " +
-						   "Expected: " + exp + "; " +
-						   "Actual: " + act + "; " +
-						   "Error: " + Math.abs(exp-act) + ". ");
+
+	@Override
+	public List<MovieRating> call() throws Exception {
+		if(this.inputlist == null) throw new Exception("Input list not initialized.");
+		
+		return this.recommend(this.inputlist);
 	}
 	
 }
