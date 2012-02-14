@@ -33,7 +33,7 @@ public class IOFile {
 				String s[] = line.split("\t");
 				uID = Integer.parseInt(s[0]);
 				mID = Integer.parseInt(s[1]);
-				ts = Long.parseLong(s[3]);
+				ts = Long.parseLong(s[2]);
 				mr = new MovieRating(uID,mID,ts,0);
 				movieRatingList.add(mr);
 			}			
