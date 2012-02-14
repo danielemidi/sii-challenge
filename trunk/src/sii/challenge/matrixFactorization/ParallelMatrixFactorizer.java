@@ -71,8 +71,14 @@ public class ParallelMatrixFactorizer implements Runnable {
 	 * 
 	 */
 	private boolean isAlreadyFactorized(int blocki, int blockj) throws Exception {
-		int userID = this.dataadapter.getI2user().get(blocki);
-		int movieID = this.dataadapter.getJ2movie().get(blockj);
+		int userID = 0;
+		int movieID = 0;
+		try{
+		 userID = this.dataadapter.getI2user().get(blocki);
+		 movieID = this.dataadapter.getJ2movie().get(blockj);
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 		return this.dataadapter.getRepository().getSingleFloatValue("SELECT COUNT(*) FROM predictionmatrix WHERE userID=? AND movieID=?", new int[]{ userID, movieID }) != 0;
 	}
 	

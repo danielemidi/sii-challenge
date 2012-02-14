@@ -196,6 +196,7 @@ public class Repository implements IRepository {
 		try {
 			statement = connection.prepareStatement(query);
 			for(int i = 0; i<args.length; i++){
+				try{
 				if(args[i].getClass().equals(Integer.class)) 
 					statement.setInt(i+1, (int)args[i]);
 				else if(args[i].getClass().equals(Long.class)) 
@@ -204,6 +205,9 @@ public class Repository implements IRepository {
 					statement.setFloat(i+1, (float)args[i]);
 				else if(args[i].getClass().equals(Double.class)) 
 					statement.setDouble(i+1, (double)args[i]);
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
 			}
 			
 			statement.executeUpdate();
@@ -216,6 +220,34 @@ public class Repository implements IRepository {
 				throw new Exception(e.getMessage());
 			}
 		}
+	}
+	
+	
+	public List<Integer> getMovieIDs() throws Exception
+	{
+		PreparedStatement statement = null;
+		List<Integer> ids = new LinkedList<Integer>();
+		ResultSet result = null;
+		String query = "SELECT id FROM movies";
+		
+		try {
+			statement = this.persistentConnection.prepareStatement(query);
+			result = statement.executeQuery();
+
+			while (result.next()) 
+				ids.add(result.getInt(1));
+			
+		} catch (SQLException e) {
+			throw new Exception(e.getMessage());
+		} finally {
+			try {
+				if (statement != null) statement.close();
+			} catch (SQLException e) {
+				throw new Exception(e.getMessage());
+			}
+		}
+		
+		return ids;
 	}
 	
 }
