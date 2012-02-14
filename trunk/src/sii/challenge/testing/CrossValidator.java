@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import sii.challenge.IRecommender;
 import sii.challenge.Recommender;
 import sii.challenge.domain.*;
 import sii.challenge.repository.*;
@@ -44,11 +45,11 @@ public class CrossValidator {
 			try {
 				System.out.println("\nCV - Current testset index = " + i + "...");
 				repository.setCurrentSetIndex(i);
-				TestRecommender recommender = new TestRecommender(repository);
 				System.out.println("CV - Loading testset...");
 				List<MovieRating> testset = repository.getTestSet();
 				Collections.shuffle(testset);
 
+				IRecommender recommender = new ParallelTestRecommender();
 				System.out.println("CV - Recommending...");
 				long start = System.currentTimeMillis();
 				List<MovieRating> predictions = recommender.recommend(testset);

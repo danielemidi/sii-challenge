@@ -29,13 +29,10 @@ public class Main {
 		String outputfilename = args[2];
 		
 		List<MovieRating> inputList = IOFile.leggiRigaSplit(inputfilename);
-		/*Repository repository = new Repository();
-		Recommender recommender = new Recommender(repository);		
-		List<MovieRating> predictions = recommender.recommend(inputList);*/
 		
 		IOFile.truncateOutputFile(outputfilename);
 		
-		int taskcount = Runtime.getRuntime().availableProcessors();
+		/*int taskcount = Runtime.getRuntime().availableProcessors();
 		int inputlistsize = inputList.size();
 		List<Future<List<MovieRating>>> tasks = new ArrayList<Future<List<MovieRating>>>(taskcount);
 		ExecutorService pool = Executors.newFixedThreadPool(taskcount);
@@ -44,8 +41,11 @@ public class Main {
 				
 		for(Future<List<MovieRating>> t : tasks) 
 			IOFile.appendToOutputFile(t.get(), outputfilename);
+			
+		pool.shutdown();*/
 		
-		pool.shutdown();
+		List<MovieRating> predictions = new ParallelRecommender().recommend(inputList);
+		IOFile.appendToOutputFile(predictions, outputfilename);
 
 		System.out.println("Grazie per aver usato il nostro Sistema di Raccomandazione!\nA presto.");
 	}
