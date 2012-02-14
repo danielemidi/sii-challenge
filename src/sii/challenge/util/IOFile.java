@@ -42,26 +42,19 @@ public class IOFile {
 
 
 	public static void truncateOutputFile(String fileOutPut) throws Exception {
-		
+		File file = new File(fileOutPut);
+		if(file.exists()) file.delete();
+		file.createNewFile();
 	}
 	
 	public static void appendToOutputFile(List<MovieRating> movieRatings, String fileOutPut) throws Exception {
 
-		File file = new File(fileOutPut);
-		boolean exist = file.createNewFile();
-		if (!exist) {
-			System.err.println("File already exists.");
-			System.exit(0);
-		} else {
-			FileWriter fstream = new FileWriter(fileOutPut);
-			BufferedWriter out = new BufferedWriter(fstream);
-			for (MovieRating mr : movieRatings) {
-				out.write(mr.getUserId() + "\t" + mr.getMovieId() + "\t"
-						+ mr.getTimestamp() + "\t" + mr.getRating() + "\n");
-			}
+		FileWriter fstream = new FileWriter(fileOutPut);
+		BufferedWriter out = new BufferedWriter(fstream);
+		for (MovieRating mr : movieRatings)
+			out.write(mr.getUserId() + "\t" + mr.getMovieId() + "\t" + mr.getTimestamp() + "\t" + mr.getRating() + "\n");
 
-			out.close();
-		}
+		out.close();
 	}
 
 	public static void main(String[] args) throws Exception {

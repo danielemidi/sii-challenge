@@ -28,7 +28,7 @@ public class ParallelMatrixFactorizer implements Runnable {
 	}
 	
 	public void factorize() throws Exception {
-		int K = 2;
+		int K = 4;
 
 		int blocksize = 50;
 		for(int blocki = 0, i = 0; blocki < R.getRowDimension(); blocki+=blocksize, i++) {

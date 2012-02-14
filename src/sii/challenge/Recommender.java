@@ -18,7 +18,7 @@ import sii.challenge.repository.IRepository;
  * - restituisce i risultati
  *
  */
-public class Recommender implements Callable<List<MovieRating>> {
+public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 
 	private List<MovieRating> inputlist;
 	

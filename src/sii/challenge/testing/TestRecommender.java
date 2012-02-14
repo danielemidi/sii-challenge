@@ -2,7 +2,9 @@ package sii.challenge.testing;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import sii.challenge.IRecommender;
 import sii.challenge.domain.*;
 import sii.challenge.prediction.*;
 import sii.challenge.repository.IRepository;
@@ -17,22 +19,31 @@ import sii.challenge.repository.IRepository;
  * - restituisce i risultati
  *
  */
-public class TestRecommender {
+public class TestRecommender implements Callable<List<MovieRating>>, IRecommender {
 
+	private List<MovieRating> inputlist;
+	
 	private IPredictor[] predictors;
 	private float[] predictions;
 	private float[] predictorErrors;
 	private float[] predictorMAEs;
+
+	public TestRecommender(IRepository repository, List<MovieRating> input) {
+		this(repository);
+		
+		this.inputlist = input;
+	}
 	
 	public TestRecommender(IRepository repository)
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		this.predictors = new IPredictor[]{
-			new MatrixFactorizationPredictor(repository)
+			new ExistingRatingPredictor(repository)
+			,new MatrixFactorizationPredictor(repository)
+			,new SimpleBiasPredictor(repository)
 			//,new DumbUserPredictor(repository)
 			//,new ItemTagBasedPredictor(repository)
 			//,new ItemGenreBasedPredictor(repository)
-			,new SimpleBiasPredictor(repository)
 			//,new SimpleTimeDependentBiasPredictor(repository)
 		};
 		this.predictions = new float[this.predictors.length];
@@ -72,9 +83,13 @@ public class TestRecommender {
 				System.out.printf("%1.1f|%5.1f|%1.8f\t", Math.abs(exp-roundedpred), this.predictorErrors[pi], this.predictorMAEs[pi]);
 				p += this.predictions[pi];
 			}
-			
-			//p /= this.predictors.length; // predizione totale come media aritmetica delle predizioni
-			p=this.predictions[0]>0 ? this.predictions[0] : this.predictions[1];
+
+			// predizione totale
+			p = this.predictions[0] > 0 ? this.predictions[0] : ( 
+					this.predictions[1] > 0 ? this.predictions[1] : ( 
+						this.predictions[2]
+					)
+				);
 			p = .5F*Math.round(p/.5);
 
 			err = Math.abs(exp-p);
@@ -108,13 +123,20 @@ public class TestRecommender {
 		return ratings;
 	}
 	
-	private void printStats(int i, int c, IPredictor p, float exp, float act)
+	/*private void printStats(int i, int c, IPredictor p, float exp, float act)
 	{
 		System.out.println("\t" + i + "/" + c + "; " +
 						   "Predictor: " + p.getClass().getName() + "; " +
 						   "Expected: " + exp + "; " +
 						   "Actual: " + act + "; " +
 						   "Error: " + Math.abs(exp-act) + ". ");
+	}*/
+
+	@Override
+	public List<MovieRating> call() throws Exception {
+		if(this.inputlist == null) throw new Exception("Input list not initialized.");
+		
+		return this.recommend(this.inputlist);
 	}
 	
 }
