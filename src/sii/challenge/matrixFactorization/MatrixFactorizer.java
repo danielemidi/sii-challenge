@@ -5,26 +5,27 @@ import java.util.List;
 
 import Jama.*;
 
+/**
+ * Attraverso la Classe MatrixFactorizer è possibile determinare la fattorizzazione di una matrice attreverso la regolarizzazione dei parametri.
+ * @author Daniele Midi, Antonio Tedeschi
+ */
 public class MatrixFactorizer {
-
-	/*
-		@INPUT:
-		    R     : a matrix to be factorized, dimension N x M
-		    P     : an initial matrix of dimension N x K
-		    Q     : an initial matrix of dimension M x K
-		    K     : the number of latent features
-		    steps : the maximum number of steps to perform the optimisation
-		    alpha : the learning rate
-		    beta  : the regularization parameter
-		@OUTPUT:
-		    the final matrices P and Q
-	 */
 	
 	final static int steps = 5000;
 	final static float alpha = 0.0002F;
 	final static float beta = 0.02F;
 			
-	//Regularization parameters
+	/**
+	 * Effettua l'aggiornamento delle matrici P e Q minimizzando l'error quadratico tra il rating reale e quello predetto
+	 * @param R: matrice di rating 
+	 * @param P: matrice relativa alle feature dell'user
+	 * @param Q: matrice relativa alle feature del movie
+	 * @param K: nummero di feature
+	 * @param step: numero di ere
+	 * @param alpha: learning rate
+	 * @param beta: fattore di regolarizzazione
+	 * @return una lista di tipo Matrix contente le matrici P e Q
+	 */
 	public static List<Matrix> factorize(Matrix R, Matrix P, Matrix Q, int K,int step, float alpha, float beta) {
 		
 		List<Matrix> feature = new LinkedList<Matrix>();
@@ -54,10 +55,7 @@ public class MatrixFactorizer {
 					}
 				}
 
-				//System.out.println();
 			}
-			// non ne ho compreso il motivo della sua esistenza!
-			//eR = dot(P,Q);
 	        double e = 0;
 	        for(int i=0; i<R.getRowDimension(); i++ )
 				for(int j=0; j<R.getColumnDimension(); j++ )
@@ -80,46 +78,21 @@ public class MatrixFactorizer {
 		
     	return feature;
 	}
-	
-//	
-//	def matrix_factorization(R, P, Q, K, steps=5000, alpha=0.0002, beta=0.02):
-//	    Q = Q.T
-//	    for step in xrange(steps):
 
-//	        for i in xrange(len(R)):
-//	            for j in xrange(len(R[i])):
-//	                if R[i][j] > 0:
-//	                    eij = R[i][j] - numpy.dot(P[i,:],Q[:,j])
-//	                    for k in xrange(K):
-//	                        P[i][k] = P[i][k] + alpha * (2 * eij * Q[k][j] - beta * P[i][k])
-//	                        Q[k][j] = Q[k][j] + alpha * (2 * eij * P[i][k] - beta * Q[k][j])
-
-//	        eR = numpy.dot(P,Q)
-//	        e = 0
-//	        for i in xrange(len(R)):
-//	            for j in xrange(len(R[i])):
-//	                if R[i][j] > 0:
-//	                    e = e + pow(R[i][j] - numpy.dot(P[i,:],Q[:,j]), 2)
-//	                    for k in xrange(K):
-//	                        e = e + (beta/2) * ( pow(P[i][k],2) + pow(Q[k][j],2) )
-//	        if e < 0.001:
-//	            break
-//	    return P, Q.T
-//	    	
-
-	
-	
-/*
- 
-    nP, nQ = matrix_factorization(R, P, Q, K)
- 	nR = numpy.dot(nP, nQ.T)
- 
- */
-	
+	/**
+	 * Date due matrici ritorna il prodotto matriciale di queste
+	 * @param P
+	 * @param Q
+	 * @return una matrice
+	 */
 	public static Matrix dot(Matrix P, Matrix Q){
 		return P.times(Q);
 	}
 	
+	/**
+	 * Stampa a video la matrice passata come parametro
+	 * @param R
+	 */
 	public static void printMatrix(Matrix R)
 	{	
 		for(int i=0; i<R.getRowDimension(); i++){
@@ -132,6 +105,4 @@ public class MatrixFactorizer {
 	}
 
 
-
-	
 }

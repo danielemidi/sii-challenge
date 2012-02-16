@@ -10,12 +10,7 @@ import sii.challenge.repository.IRepository;
 
 /**
  * 
- * - riceve in input Training set e Test set
- * - crea le strutture dati per il Predictor
- * - crea l'IPredictor (scelto magari da file di Configurazione)
- * - per ogni tupla del Test set:
- *   - lancia l'IPredictor e attende i risultati
- * - restituisce i risultati
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class Recommender implements Callable<List<MovieRating>>, IRecommender {
@@ -27,12 +22,22 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 	private float[] predictorErrors;
 	private float[] predictorMAEs;
 	
+	/**
+	 * 
+	 * @param repository
+	 * @param input
+	 */
 	public Recommender(IRepository repository, List<MovieRating> input) {
 		this(repository);
 		
 		this.inputlist = input;
 	}
 	
+	/**
+	 * Inizializza il recommendere con una lista di predittori da utilizzare per l'applicazione.
+	 * I predittori adottati sono:ExistingRatingPredictor, MatrixFactorizationPredictor, SimpleBiasPredictor
+	 * @param repository
+	 */
 	public Recommender(IRepository repository)
 	{
 		System.out.println("R - Creating Predictor(s)...");
@@ -50,6 +55,13 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 		this.predictorMAEs = new float[this.predictors.length];
 	}
 	
+	/**
+	 * Effettua la predizione adottando i predittori che sono stati assegnati al recommender, effettuando un arrotondamento di questi valori
+	 * per rapportarsi alla scala di voti da 0.5 a 5 con passo di 0.5.
+	 * @param input: lista di movie rating che devono essere raccomandati e di cui si vuole conoresce il rating
+	 * @return una lista di oggetti MovieRating contentente i rating relative alle tuple passate in input
+	 * @throws Exception
+	 */
 	public List<MovieRating> recommend(List<MovieRating> input) throws Exception
 	{
 		int i = 1;

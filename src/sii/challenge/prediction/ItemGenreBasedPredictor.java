@@ -3,15 +3,19 @@ package sii.challenge.prediction;
 import sii.challenge.repository.IRepository;
 
 /**
- * 
  * Come predizione usa la media pesata dei voti dati dall'utente UserID ai TopN (100) Movies più simili a MovieID.
- * La similarità fra Movies è precalcolata in base ai valori statici posseduti, quali corrispondenze di attori, registi, generi, general ratings, ...
+ * La similarità fra i generi dei movie è precalcolata in base ai valori statici posseduti
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class ItemGenreBasedPredictor implements IPredictor {
 
 	private final IRepository repository;
 	
+	/**
+	 * Costruttore
+	 * @param repository
+	 */
 	public ItemGenreBasedPredictor(IRepository repository)
 	{
 		this.repository = repository;

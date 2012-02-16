@@ -9,6 +9,7 @@ import sii.challenge.repository.IRepository;
 
 /**
  * Prende i rating dal DB e crea una matrice UxI->R utile alla MatrixFactorization
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class MatrixFactorizationDataAdapter {
@@ -48,9 +49,11 @@ public class MatrixFactorizationDataAdapter {
 	}
 
 
-
-
-
+	/**
+	 *  DA RICONTROLLARE
+	 * @return
+	 * @throws Exception
+	 */
 	public Matrix readAndAdapt() throws Exception {
 
 		Map<Integer, Integer> movie2j = new HashMap<Integer, Integer>();
@@ -101,7 +104,13 @@ public class MatrixFactorizationDataAdapter {
 		return matrix;
 	}
 	
-	
+	/**
+	 * 
+	 * @param matrix
+	 * @param offseti
+	 * @param offsetj
+	 * @throws Exception
+	 */
 	public void adaptAndWrite(Matrix matrix, int offseti, int offsetj) throws Exception {
 		Object[] param = new Object[matrix.getRowDimension()*matrix.getRowDimension()*3];
 		StringBuilder query = new StringBuilder();

@@ -1,17 +1,28 @@
 package sii.challenge.prediction;
 
 import sii.challenge.repository.IRepository;
-
+/**
+ * Classico approccio User-Based NN, necessario il preprocessamento delle similarità tra gli utenti con la Adjusted Cosine Similarity definita come funzione in MySQL 
+ * per aumentare la velocità di elaborazione.
+ * @author Daniele Midi, Antonio Tedeschi
+ *
+ */
 public class UserBasedPredictor implements IPredictor {
 
 	private final IRepository repository;
 
-	// IN PRECEDENZA PRENDEVA UN TRANING DATASET
+	/**
+	 * Costruttore
+	 * @param repository
+	 */
 	public UserBasedPredictor(IRepository repository)
 	{
 		this.repository = repository;
 	}
 	
+	/**
+	 * MODIFICARE LA QUERY!!!!!!
+	 */
 	@Override
 	public float PredictRating(int userid, int movieid, long timestamp) {
 		float p = 0;

@@ -3,8 +3,9 @@ package sii.challenge.prediction;
 import sii.challenge.repository.IRepository;
 
 /**
- * Predictor che usa i bias dei dati disponibili
- *
+ * La logica adottata è la stessa di quella osservata in SimpleBiasPredictor con la differenza che sono presi in considerazione anche i timestamp
+ * @author Daniele Midi, Antonio Tedeschi
+ * 
  */
 public class SimpleTimeDependentBiasPredictor implements IPredictor {
 
@@ -12,6 +13,10 @@ public class SimpleTimeDependentBiasPredictor implements IPredictor {
 	
 	private float overallAverageRating = 2.5F;
 	
+	/**
+	 * Costruttore
+	 * @param repository
+	 */
 	public SimpleTimeDependentBiasPredictor(IRepository repository)
 	{
 		this.repository = repository;

@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 import sii.challenge.IRecommender;
-import sii.challenge.Recommender;
 import sii.challenge.domain.*;
 import sii.challenge.repository.*;
 
@@ -20,6 +19,8 @@ import sii.challenge.repository.*;
  *   - lancia il Recommender e attende le predizioni di risultato
  *   - confronta le predizioni con il rating reale e calcola il MAE
  * - aggrega i MAE e restituisce il MAE globale
+ * 
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class CrossValidator {
@@ -27,6 +28,10 @@ public class CrossValidator {
 	public final int K = 3;
 	public final int STOP_AFTER_EVERY = 1;
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public float runTest()
 	{
 		float totalmae = 0;
@@ -82,7 +87,12 @@ public class CrossValidator {
 		return totalmae;
 	}
 	
-	
+	/**
+	 * Calcola il MAE
+	 * @param expected: il valore di rating reale
+	 * @param actual: il valore di rating predetto
+	 * @return
+	 */
 	private float calculateMAE(List<MovieRating> expected, List<MovieRating> actual) {
 		float mae = 0;
 		

@@ -3,13 +3,8 @@ package sii.challenge.preprocessing;
 import sii.challenge.preprocessing.MultithreadPreprocessor;
 
 /**
- * 
- * - riceve in input il file di Test e il nome del file di Output
- * - parsa il file di Test
- * - ottiene i dati dal DB
- * - crea Recommender passandogli i dati del DB come Training set e i dati del file di Test come Test set
- * - lancia il Recommender e attende le predizioni di risultato
- * - scrive le predizioni nel file di Output
+ * Lancia il preprocessamento per effettuare la similarità statica tra i movie presenti nel database, in base a quanto descritto in Mul
+ * @author Daniele Midi, Antonio Tedeschi 
  *
  */
 public class Main {

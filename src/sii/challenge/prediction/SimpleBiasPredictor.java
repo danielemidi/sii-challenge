@@ -3,7 +3,12 @@ package sii.challenge.prediction;
 import sii.challenge.repository.IRepository;
 
 /**
- * Predictor che usa i bias dei dati disponibili
+ * Predittore che usa i bias dei dati disponibili valutandone il discostamento.la deviazione dalla media globale della media dei voti dell'utente (userbias) e la deviazione 
+ * dalla media globale della media dei voti per il film (itembias). Se la media globale è diversa da zero allora si calcola la differenza  tra la media globale della media
+ * dei voti e la media globale dei rating, ossia a 2,5 (overallAverageRating). Nel caso in cui la deviazione dovesse essere nulla in entrambi i casi 
+ * si pongono userbias e itembias a 0. Infine il rating sarà overallAverageRating + userbias + itembias. 
+ * 
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class SimpleBiasPredictor implements IPredictor {
@@ -12,6 +17,10 @@ public class SimpleBiasPredictor implements IPredictor {
 	
 	private float overallAverageRating = 2.5F;
 	
+	/**
+	 * Costruttore
+	 * @param repository
+	 */
 	public SimpleBiasPredictor(IRepository repository)
 	{
 		this.repository = repository;

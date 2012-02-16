@@ -3,14 +3,18 @@ package sii.challenge.prediction;
 import sii.challenge.repository.IRepository;
 
 /**
- * Predictor che fa la media dei voti dell'utente UserID per tutti i movie che ha votato
- * @author Daniele
+ * Recupera dal database il rating per la tupla (user, movie, timestamp), che è stata precedentemente preprocessata tramite l'utilizzo del metodo factorize presente in MatrixFactorizer
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class MatrixFactorizationPredictor implements IPredictor {
 
 	private final IRepository repository;
 	
+	/**
+	 * Costruttore
+	 * @param repository
+	 */
 	public MatrixFactorizationPredictor(IRepository repository)
 	{
 		this.repository = repository;

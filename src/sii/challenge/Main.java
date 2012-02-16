@@ -12,17 +12,18 @@ import sii.challenge.util.IOFile;
 
 
 /**
- * 
- * - riceve in input il file di Test e il nome del file di Output
- * - parsa il file di Test
- * - ottiene i dati dal DB
- * - crea Recommender passandogli il repository da cui prendere i dati del training set
- * - lancia il Recommender sul test set e attende le predizioni di risultato
- * - scrive le predizioni nel file di Output
+ * Lancia l'esecuzione del sistema
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class Main {
-
+	
+	/**
+	 * Legge i path dei file da cui si desidera leggere e in cui si vuole scrivere i rating che sono stati predetti
+	 * e lancia l'esecuzione di ParalleRecommender
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		
 		String inputfilename = args[1];

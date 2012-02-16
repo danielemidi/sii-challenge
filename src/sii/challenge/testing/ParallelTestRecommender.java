@@ -7,6 +7,11 @@ import sii.challenge.IRecommender;
 import sii.challenge.domain.*;
 import sii.challenge.repository.*;
 
+/**
+ * 
+ * @author Daniele Midi, Antonio Tedeschi 
+ *
+ */
 public class ParallelTestRecommender implements IRecommender {
 	
 	public List<MovieRating> recommend(List<MovieRating> input) throws Exception

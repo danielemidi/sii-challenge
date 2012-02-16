@@ -3,14 +3,19 @@ package sii.challenge.prediction;
 import sii.challenge.repository.IRepository;
 
 /**
- * Predictor che fa la media dei voti dell'utente UserID per tutti i movie che ha votato
- * @author Daniele
+ * Predittore che verifica se il rating associato alla tupla (user, movie, timestamp) esiste già nel DataBase. Se si restituisce quel valore altrimenti restituisce 0. 
+ * Aumento della precisione e evita la necessità di effettuare predizioni inutili. 
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class ExistingRatingPredictor implements IPredictor {
 
 	private final IRepository repository;
 	
+	/**
+	 * Costruttore
+	 * @param repository
+	 */
 	public ExistingRatingPredictor(IRepository repository)
 	{
 		this.repository = repository;
