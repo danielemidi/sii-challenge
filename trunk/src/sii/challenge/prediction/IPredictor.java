@@ -6,6 +6,7 @@ package sii.challenge.prediction;
  *
  */
 public interface IPredictor {
+	
 	/**
 	 * Dato l'id dell'user, del movie ed il relativo timestamp, perdette di ottenere la predizione del rating relativa a questa tupla
 	 * @param userid

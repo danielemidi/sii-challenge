@@ -11,7 +11,7 @@ import sii.challenge.repository.*;
 import sii.challenge.util.DataSource;
 
 /**
- * 
+ * Permette di effettuare il preprocessamento dei dati per la similarità statica tra movie
  * @author Daniele Midi, Antonio Tedeschi 
  *
  */

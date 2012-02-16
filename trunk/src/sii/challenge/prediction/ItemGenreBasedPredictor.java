@@ -22,6 +22,13 @@ public class ItemGenreBasedPredictor implements IPredictor {
 	}
 	
 	@Override
+	/**
+	 * Si faccia riferimento alla descrizione della classe e alla descrizione del omonimo metodo in IPredictor
+	 * @param userid
+	 * @param movieid
+	 * @param timestamp
+	 * @return
+	 */
 	public float PredictRating(int userid, int movieid, long timestamp) {
 		float p = 0;
 		try {

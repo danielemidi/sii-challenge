@@ -32,6 +32,13 @@ public class SimpleBiasPredictor implements IPredictor {
 	}
 	
 	@Override
+	/**
+	 * Si faccia riferimento alla descrizione della classe e alla descrizione del omonimo metodo in IPredictor
+	 * @param userid
+	 * @param movieid
+	 * @param timestamp
+	 * @return
+	 */
 	public float PredictRating(int userid, int movieid, long timestamp) {
 		try {
 			// deviazione dalla media globale della media dei voti dell'utente

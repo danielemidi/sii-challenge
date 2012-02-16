@@ -5,6 +5,11 @@ import java.util.List;
 
 import sii.challenge.domain.MovieRating;
 
+/**
+ * 
+ * @author Daniele Midi, Antonio Tedeschi
+ *
+ */
 public interface IRepository {
 
 	float getSingleFloatValue(String query, int[] args) throws Exception;

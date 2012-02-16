@@ -10,13 +10,7 @@ import sii.challenge.prediction.*;
 import sii.challenge.repository.IRepository;
 
 /**
- * 
- * - riceve in input Training set e Test set
- * - crea le strutture dati per il Predictor
- * - per ogni tupla del Test set:
- *   - lancia l'IPredictor e attende i risultati
- * - restituisce i risultati
- *
+ * Ha il medesimo comportamento della Classe Recommender, ma è utilizzata per scopi di Testing
  * @author Daniele Midi, Antonio Tedeschi 
  *
  */
@@ -35,6 +29,10 @@ public class TestRecommender implements Callable<List<MovieRating>>, IRecommende
 		this.inputlist = input;
 	}
 	
+	/**
+	 * Costruttore
+	 * @param repository
+	 */
 	public TestRecommender(IRepository repository)
 	{
 		System.out.println("R - Creating Predictor(s)...");
