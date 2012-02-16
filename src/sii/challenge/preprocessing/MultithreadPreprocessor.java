@@ -6,6 +6,12 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Permette di effettuare il preprocessamento dei dati per la similarità statica tra movie. 
+ * Ottimizzato per usare più thread per il preprocessamente e si basa sui metodi definiti in Preprocessor
+ * @author Daniele Midi, Antonio Tedeschi
+ *
+ */
 public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 
 	private int tot;

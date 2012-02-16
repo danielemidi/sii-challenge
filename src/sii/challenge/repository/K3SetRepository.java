@@ -53,23 +53,28 @@ public class K3SetRepository extends Repository implements IKSetRepository {
 		
 		return "trainingset";
 	}
+	
 	private String adaptQueryToCurrentKSet(String query)
 	{
 		return query.replaceAll("user_ratedmovies", this.getKView());
 	}
 	
 
-
+	
 	public float getSingleFloatValue(String query, int[] args, Connection connection) throws Exception
 	{
 		query = adaptQueryToCurrentKSet(query);
 		return super.getSingleFloatValue(query, args, connection);
 	}
+	
+	
 	public float getSingleFloatValue(String query, Object[] args, Connection connection) throws Exception
 	{
 		query = adaptQueryToCurrentKSet(query);
 		return super.getSingleFloatValue(query, args, connection);
 	}
+	
+	
 	public float getSingleFloatValueWithoutQueryRewriting(String query, int[] args) throws Exception
 	{
 		Connection connection = null;
@@ -92,13 +97,11 @@ public class K3SetRepository extends Repository implements IKSetRepository {
 	}
 	
 	
-	
-	
 	/**
 	 * Restituisce l'i-esimo set della tabella degli UserRatings, divisa in K set.
 	 * @param k number of set in which to split the whole table
 	 * @param i zero-based index of the set to retrieve
-	 * @return
+	 * @return una lista di oggetti MovieRating
 	 * @throws Exception 
 	 */
 	public List<MovieRating> getTestSet() throws Exception {

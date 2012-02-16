@@ -9,6 +9,8 @@ import sii.challenge.prediction.*;
 import sii.challenge.repository.IRepository;
 
 /**
+ * Crea oggetti Recommender costituiti da un array di predittori, di predizioni, di errori di predizione, di MAE. In questo modo si eseguono contemporaneamente tre predittori.
+ * Pertanto se uno fallisce, ossia se la predizione determinata è nulla, subentra il predittore successivo (tecnica di fallback)
  * 
  * @author Daniele Midi, Antonio Tedeschi
  *
@@ -23,7 +25,7 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 	private float[] predictorMAEs;
 	
 	/**
-	 * 
+	 * Costruttore
 	 * @param repository
 	 * @param input
 	 */

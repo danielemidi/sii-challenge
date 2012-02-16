@@ -10,6 +10,11 @@ import java.util.List;
 import sii.challenge.domain.MovieRating;
 import sii.challenge.util.DataSource;
 
+/**
+ * 
+ * @author Daniele Midi, Antonio Tedeschi
+ *
+ */
 public class Repository implements IRepository {
 
 	private DataSource dataSource;
@@ -37,7 +42,13 @@ public class Repository implements IRepository {
 	    }
 	}
 	
-
+	/**
+	 * 
+	 * @param query
+	 * @param args
+	 * @return
+	 * @throws Exception
+	 */
 	public float getSingleFloatValue(String query, int[] args) throws Exception
 	{
 		Connection connection = null;
@@ -58,6 +69,15 @@ public class Repository implements IRepository {
 		
 		return result;
 	}
+	
+	/**
+	 * 
+	 * @param query
+	 * @param args
+	 * @param connection
+	 * @return
+	 * @throws Exception
+	 */
 	public float getSingleFloatValue(String query, int[] args, Connection connection) throws Exception
 	{
 		PreparedStatement statement = null;
@@ -86,10 +106,13 @@ public class Repository implements IRepository {
 		return res;
 	}
 	
-	
-	
-
-
+	/**
+	 * 
+	 * @param query
+	 * @param args
+	 * @return
+	 * @throws Exception
+	 */
 	public float getSingleFloatValue(String query, Object[] args) throws Exception
 	{
 		Connection connection = null;
@@ -110,6 +133,15 @@ public class Repository implements IRepository {
 		
 		return result;
 	}
+	
+	/**
+	 * 
+	 * @param query
+	 * @param args
+	 * @param connection
+	 * @return
+	 * @throws Exception
+	 */
 	public float getSingleFloatValue(String query, Object[] args, Connection connection) throws Exception
 	{
 		PreparedStatement statement = null;
@@ -144,7 +176,13 @@ public class Repository implements IRepository {
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @param query
+	 * @param args
+	 * @return
+	 * @throws Exception
+	 */
 	public List<MovieRating> getMovieRatingList(String query, int[] args) throws Exception
 	{
 		Connection connection = this.dataSource.getConnection();
@@ -184,11 +222,24 @@ public class Repository implements IRepository {
 	
 	
 	
-
+	/**
+	 * 
+	 * @param query
+	 * @param args
+	 * @throws Exception
+	 */
 	public void write(String query, Object[] args) throws Exception
 	{
 		this.write(query, args, this.persistentConnection);
 	}
+	
+	/**
+	 * 
+	 * @param query
+	 * @param args
+	 * @param connection
+	 * @throws Exception
+	 */
 	public void write(String query, Object[] args, Connection connection) throws Exception
 	{
 		PreparedStatement statement = null;
@@ -222,7 +273,11 @@ public class Repository implements IRepository {
 		}
 	}
 	
-	
+	/**
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Integer> getMovieIDs() throws Exception
 	{
 		PreparedStatement statement = null;
