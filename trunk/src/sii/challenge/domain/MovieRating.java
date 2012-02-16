@@ -1,5 +1,10 @@
 package sii.challenge.domain;
 
+/**
+ * Classe implementata per rappresentare le tuple (user,movie,timestamp, rating) di cui si vuole determinare il rating che verrà memorizzato in esso.
+ * @author Daniele Midi, Antonio Tedeschi
+ *
+ */
 public class MovieRating {
 
 	private int userId;

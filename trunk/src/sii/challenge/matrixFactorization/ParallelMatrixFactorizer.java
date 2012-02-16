@@ -7,6 +7,12 @@ import sii.challenge.repository.K3SetRepository;
 
 import Jama.Matrix;
 
+/**
+ * Effettua la parallelizzazione del fattorizzazione della matrice di rating sparsa data come input al sistema, 
+ * al fine di effettuare il preprocessamento ottenendo una nuova matrice di rating densa
+ * @author Daniele Midi, Antonio Tedeschi
+ *
+ */
 public class ParallelMatrixFactorizer implements Runnable {
 	
 	private String taskid;
@@ -16,6 +22,14 @@ public class ParallelMatrixFactorizer implements Runnable {
 	private boolean doEvenCols;
 	private MatrixFactorizationDataAdapter dataadapter;
 	
+	/**
+	 * Costruttore
+	 * @param R
+	 * @param doEvenRows
+	 * @param doEvenCols
+	 * @param i2user
+	 * @param j2movie
+	 */
 	public ParallelMatrixFactorizer(Matrix R, boolean doEvenRows, boolean doEvenCols, Map<Integer, Integer> i2user, Map<Integer, Integer> j2movie) {
 		this.R = R;
 		this.doEvenRows = doEvenRows;
@@ -27,6 +41,10 @@ public class ParallelMatrixFactorizer implements Runnable {
 		this.taskid = "["+(doEvenRows?"P":"D") + (doEvenCols?"P":"D")+"]"; 
 	}
 	
+	/**
+	 * Effettua la fattorizazzione su sottomatrici dell'ordine 50x50 aumentando la velocità di esecuzione.
+	 * @throws Exception
+	 */
 	public void factorize() throws Exception {
 		int K = 4;
 

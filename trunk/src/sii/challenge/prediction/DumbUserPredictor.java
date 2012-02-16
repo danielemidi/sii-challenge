@@ -3,14 +3,18 @@ package sii.challenge.prediction;
 import sii.challenge.repository.IRepository;
 
 /**
- * Predictor che fa la media dei voti dell'utente UserID per tutti i movie che ha votato
- * @author Daniele
+ * Predittore che fa la media dei voti dell'utente UserID per tutti i movie che ha votato
+ * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public class DumbUserPredictor implements IPredictor {
 
 	private final IRepository repository;
 	
+	/**
+	 * Costruttore
+	 * @param repository
+	 */
 	public DumbUserPredictor(IRepository repository)
 	{
 		this.repository = repository;

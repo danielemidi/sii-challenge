@@ -1,7 +1,7 @@
 package sii.challenge.prediction;
 
 import sii.challenge.repository.IRepository;
-
+@Deprecated
 /**
  * 
  * Come predizione usa la media pesata dei voti dati dall'utente UserID ai TopN (100) Movies più simili a MovieID.

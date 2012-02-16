@@ -2,15 +2,11 @@ package sii.challenge.testing;
 
 
 /**
- * 
- * - riceve in input il file di Test e il nome del file di Output
- * - parsa il file di Test
- * - ottiene i dati dal DB
- * - crea Recommender passandogli il repository da cui prendere i dati del training set
- * - lancia il Recommender sul test set e attende le predizioni di risultato
- * - scrive le predizioni nel file di Output
+ * Crea un nuovo CrossValidator ed esegue il relativo runTest
+ * @author Daniele Midi, Antonio Tedeschi 
  *
  */
+
 public class Main {
 
 	public static void main(String[] args) {

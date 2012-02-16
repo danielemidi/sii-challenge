@@ -10,18 +10,30 @@ import java.util.List;
 import sii.challenge.repository.*;
 import sii.challenge.util.DataSource;
 
+/**
+ * 
+ * @author Daniele Midi, Antonio Tedeschi 
+ *
+ */
 public class Preprocessor {
 
 	protected DataSource dataSource;
 	protected Connection connection;
 	protected IRepository repository;
 	
+	/**
+	 * Costruttore inizializzato con DataSource e Repository
+	 */
 	public Preprocessor()
 	{
 		this.dataSource = new DataSource();
 		this.repository = new Repository();
 	}
-
+	
+	/**
+	 * Esegue preprocessItemStaticSimilarity()
+	 * @throws Exception
+	 */
 	public void preprocess() throws Exception
 	{
 		this.preprocessItemStaticSimilarity();
@@ -29,7 +41,10 @@ public class Preprocessor {
 		System.out.println("Preprocessing complete.");
 	}
 	
-	
+	/**
+	 * Effettua il preprocessamento dei dati passando al metodo calculateAndPersist gli id che devono essere processati, presenti nella lista movieids
+	 * @throws Exception
+	 */
 	protected void preprocessItemStaticSimilarity() throws Exception
 	{
 		System.out.println("ID1\tID2\tACT\tDIR\tGEN\tCOU\tTAG\tALL\tTOP\tAUD\tDEC\t\tSIM");
@@ -49,6 +64,16 @@ public class Preprocessor {
 		}
 	}
 
+	/**
+	 * Calcola e persiste nella tabella item_static_similarities del database il grado di similarità tra i due film basata su: 
+	 * actorsincommon, directorsincommon, genresincommon, countriesincommon, tagsincommon, allcriticsscorediscrepance, topcriticsscorediscrepance, 
+	 * audiencescorediscrepance, decadediscrepance. I valori di queste componenti sono comprese tra [0,1].
+	 * La similarità tra due movie è quindi ottenuta attraverso una cobinazione degli elementi suddetti opportunamenti pesati restuendo un valore compreso tra [0,1]
+	 *  
+	 * @param id1: id del primo movie
+	 * @param id2: id del secondo movie 
+	 * @throws Exception
+	 */
 	protected void calculateAndPersistSimilarity(int id1, int id2) throws Exception {
 		float actorsincommon = this.getStuffInCommon("movie_actors", "actorID", id1, id2);
 		float directorsincommon = this.getStuffInCommon("movie_directors", "directorID", id1, id2);
@@ -94,8 +119,7 @@ public class Preprocessor {
 			statement.executeUpdate();
 			
 		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-			//throw new Exception(e.getMessage());
+			throw new Exception(e.getMessage());
 		} finally {
 			try {
 				if (statement != null) statement.close();
@@ -104,12 +128,32 @@ public class Preprocessor {
 			}
 		}
 	}
-
+	
+	/**
+	 * Stampa a video gli id dei due movie, i relativi gradi di somiglianza e la similarità totale tra i due movie.
+	 * @param id1: id del primo movie
+	 * @param id2: id del secondo movie con cui si è fatto il confronto
+	 * @param actorsincommon: numero di attori in comune
+	 * @param directorsincommon: numero di registi in comune
+	 * @param genresincommon: numero di generi in comune
+	 * @param countriesincommon: numero di country in comune
+	 * @param tagsincommon: numero di tag in comune
+	 * @param allcriticsscorediscrepance: discrepanza tra gli allcriticsscore assegnati ai movie
+	 * @param topcriticsscorediscrepance: discrepanza tra gli topcriticsscorediscrepance assegnati ai movie
+	 * @param audiencescorediscrepance: discrepanza tra gli audiencescorediscrepance assegnati ai movie
+	 * @param decadediscrepance: discrepanza tra le decadi dei due movie
+	 * @param similarity: valore di similarità tra i due movie compresa tra [0,1]
+	 * @return una stringa
+	 */
 	protected String formatSimilarityLogLine(int id1, int id2, float actorsincommon, float directorsincommon, float genresincommon, float countriesincommon, float tagsincommon, float allcriticsscorediscrepance, float topcriticsscorediscrepance, float audiencescorediscrepance, float decadediscrepance, float similarity) {
 		return id1+"\t"+id2+"\t"+actorsincommon+"\t"+directorsincommon+"\t"+genresincommon+"\t"+countriesincommon+"\t"+tagsincommon+"\t"+allcriticsscorediscrepance+"\t"+topcriticsscorediscrepance+"\t"+audiencescorediscrepance+"\t"+decadediscrepance+"\t\t"+similarity;
 	}
 	
-	
+	/**
+	 * Recupera dal DB la lista di id relativi ai movie
+	 * @return una lista di interi rappresentati gli id dei movie
+	 * @throws Exception
+	 */
 	protected List<Integer> getMovieIDs() throws Exception
 	{
 		PreparedStatement statement = null;
@@ -137,6 +181,13 @@ public class Preprocessor {
 		return ids;
 	}
 	
+	/**
+	 * Determina quali sono gli id che non sono presenti nella tabella item_static_similarities.
+	 * Necessario a causa del lungo preprocessamento
+	 * @param iditem1
+	 * @return lista di interi rappresentanti id dei movie
+	 * @throws Exception
+	 */
 	protected List<Integer> getRemainingInternalMovieIDs(int iditem1) throws Exception
 	{
 		PreparedStatement statement = null;
@@ -165,7 +216,15 @@ public class Preprocessor {
 		return ids;
 	}
 	
-	
+	/**
+	 * Determina il numero di elementi in comune tra due movies in base alla colonna(ad esempio: idactor) e alla tabella (ad es: movie_actors).
+	 * @param tablename
+	 * @param idcolname
+	 * @param idmovie1
+	 * @param idmovie2
+	 * @return il numero di elementi in comune tra i due film
+	 * @throws Exception
+	 */
 	protected float getStuffInCommon(String tablename, String idcolname, int idmovie1, int idmovie2) throws Exception
 	{
 		String query = "SELECT incommon/total as perc FROM " +
@@ -180,7 +239,16 @@ public class Preprocessor {
 	}
 
 	
-	
+	/**
+	 * Grazie ai pesi associati ai tag in comune tra due movie, determina il grado di similarità tra questi in base al tag
+	 * @param tablename
+	 * @param idcolname
+	 * @param weightcolname
+	 * @param idmovie1
+	 * @param idmovie2
+	 * @return
+	 * @throws Exception
+	 */
 	protected float getWeightedStuffInCommon(String tablename, String idcolname, String weightcolname, int idmovie1, int idmovie2) throws Exception
 	{
 		String query = "SELECT incommon/total as perc FROM " +
@@ -195,7 +263,17 @@ public class Preprocessor {
 		
 	}
 	
-	
+	/**
+	 * Determina la discrepanza tra due valori numerici relativi ai due movie in esame. 
+	 * Ad esempio la discrepanza tra audiencescore associata ai due movie passati come inpunt
+	 * @param tablename
+	 * @param colname: la colonna della tabella da cui ottenere i valori
+	 * @param normalizationfactor
+	 * @param idmovie1
+	 * @param idmovie2
+	 * @return la discrepanza tra i valori recuperati
+	 * @throws Exception
+	 */
 	protected float getDiscrepance(String tablename, String colname, int normalizationfactor, int idmovie1, int idmovie2) throws Exception
 	{
 		String query = "SELECT 1-ABS((A1."+colname+" - A2."+colname+")/"+normalizationfactor+") as perc " +
@@ -205,7 +283,13 @@ public class Preprocessor {
 		return this.repository.getSingleFloatValue(query, new int[]{ idmovie1, idmovie2 }, this.connection);
 	}
 	
-	
+	/**
+	 * Dati due movie determina la differenza di decadi che c'è tra questi
+	 * @param idmovie1
+	 * @param idmovie2
+	 * @return la discrepanza tra le due decadi
+	 * @throws Exception
+	 */
 	protected float getDecadeDiscrepance(int idmovie1, int idmovie2) throws Exception
 	{
 		String query = "SELECT 1-(ABS(FLOOR(A1.year/10) - FLOOR(A2.year/10))/10) as y " +
