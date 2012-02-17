@@ -48,9 +48,6 @@ public class K3SetRepository extends Repository implements IKSetRepository {
 	
 	private String getKView()
 	{
-		//int startrowindex = this.KSetSize*this.CurrentSetIndex - 1;
-		//int ithsetendingindex = this.KSetSize*(this.CurrentSetIndex+1);
-		
 		return "trainingset";
 	}
 	
@@ -98,9 +95,8 @@ public class K3SetRepository extends Repository implements IKSetRepository {
 	
 	
 	/**
-	 * Restituisce l'i-esimo set della tabella degli UserRatings, divisa in K set.
-	 * @param k number of set in which to split the whole table
-	 * @param i zero-based index of the set to retrieve
+	 * Restituisce il set dei dati attualmente utilizzato come Test Set
+	 * 
 	 * @return una lista di oggetti MovieRating
 	 * @throws Exception 
 	 */

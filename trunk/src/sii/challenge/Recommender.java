@@ -9,8 +9,8 @@ import sii.challenge.prediction.*;
 import sii.challenge.repository.IRepository;
 
 /**
- * Crea oggetti Recommender costituiti da un array di predittori, di predizioni, di errori di predizione, di MAE. In questo modo si eseguono contemporaneamente tre predittori.
- * Pertanto se uno fallisce, ossia se la predizione determinata è nulla, subentra il predittore successivo (tecnica di fallback)
+ * Implementa l'oggetto principale che effettua le predizioni.
+ * Vengono creati una serie di predittori, usati in cascata con tecniche di fallback qualora il precedente non trovi predizioni attendibili.
  * 
  * @author Daniele Midi, Antonio Tedeschi
  *
@@ -20,9 +20,6 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 	private List<MovieRating> inputlist;
 	
 	private IPredictor[] predictors;
-	private float[] predictions;
-	private float[] predictorErrors;
-	private float[] predictorMAEs;
 	
 	/**
 	 * Costruttore
@@ -44,17 +41,10 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 	{
 		System.out.println("R - Creating Predictor(s)...");
 		this.predictors = new IPredictor[]{
-			new ExistingRatingPredictor(repository)
-			,new MatrixFactorizationPredictor(repository)
-			,new SimpleBiasPredictor(repository)
-			//,new DumbUserPredictor(repository)
-			//,new ItemTagBasedPredictor(repository)
-			//,new ItemGenreBasedPredictor(repository)
-			//,new SimpleTimeDependentBiasPredictor(repository)
+			new ExistingRatingPredictor(repository),
+			new MatrixFactorizationPredictor(repository),
+			new SimpleTimeDependentBiasPredictor(repository)
 		};
-		this.predictions = new float[this.predictors.length];
-		this.predictorErrors = new float[this.predictors.length];
-		this.predictorMAEs = new float[this.predictors.length];
 	}
 	
 	/**
@@ -66,71 +56,32 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 	 */
 	public List<MovieRating> recommend(List<MovieRating> input) throws Exception
 	{
-		int i = 1;
-		int c = input.size();
+		float p = 0;
+		
 		System.out.println("R - Recommending...");
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
 		
-		float exp;
-		float p;
-		float roundedpred;
-		float err;
-		float totalerror = 0;
-		
-		for(int pi = 0; pi<this.predictors.length; pi++)
-			System.out.print(this.predictors[pi].getClass().getSimpleName() + "\t");
-		System.out.println();
-		
 		for(MovieRating mr : input)
 		{
-			exp =  mr.getRating();
-			p = 0;
-			
-			System.out.printf("%5s/%s:\t",i,c);
-			for(int pi = 0; pi<this.predictors.length; pi++)
+			for(IPredictor predictor : this.predictors)
 			{
-				this.predictions[pi] = this.predictors[pi].PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
-				roundedpred = .5F*Math.round(this.predictions[pi]/.5);
-				this.predictorErrors[pi] += Math.abs(exp-roundedpred);
-				this.predictorMAEs[pi] = this.predictorErrors[pi]/i;
-				System.out.printf("%1.1f|%5.1f|%1.8f\t", Math.abs(exp-roundedpred), this.predictorErrors[pi], this.predictorMAEs[pi]);
-				p += this.predictions[pi];
+				p = predictor.PredictRating(mr.getUserId(), mr.getMovieId(), mr.getTimestamp());
+				if(p>0) break;
 			}
 			
-			// predizione totale
-			p = this.predictions[0] > 0 ? this.predictions[0] : ( 
-					this.predictions[1] > 0 ? this.predictions[1] : ( 
-						this.predictions[2]
-					)
-				);
+			// predizione finale
 			p = .5F*Math.round(p/.5);
-
-			err = Math.abs(exp-p);
-			totalerror += err;
 			
-			System.out.println("]=> P: " + p + "\tERR: " + err + "\tMAE: " + totalerror/i);
-			
-			if(p<0) p = .5F;
+			if(p<0) p = 3F;
 			
 			MovieRating pmr = new MovieRating(
 				mr.getUserId(), 
 				mr.getMovieId(), 
 				mr.getTimestamp(), 
-				.5F*Math.round(p/.5)
+				p
 			);
 			ratings.add(pmr);
-			
-			i++;
 		}
-
-		System.out.println("Total MAE:");
-		for(int pi = 0; pi<this.predictors.length; pi++)
-		{
-			this.predictorMAEs[pi] = this.predictorErrors[pi]/c;
-			System.out.printf("\t\t%s : %1.8f MAE\n", this.predictors[pi].getClass().getSimpleName(), this.predictorMAEs[pi]);
-		}
-		
-		System.out.println();
 		
 		return ratings;
 	}
