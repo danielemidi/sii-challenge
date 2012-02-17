@@ -8,7 +8,7 @@ import sii.challenge.domain.*;
 import sii.challenge.repository.*;
 
 /**
- * 
+ * Esegue in parallelo il Recommender di Testing
  * @author Daniele Midi, Antonio Tedeschi 
  *
  */

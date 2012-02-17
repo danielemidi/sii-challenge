@@ -12,8 +12,7 @@ import sii.challenge.repository.*;
 
 /** 
  * 
- * - Legge i dati dal database
- * - Splitta il dataset in k set
+ * - Ottiene training e test set dal KsetRepository 
  * - per ogni set:
  *   - crea Recommender passandogli k-1 set come Training set e 1 set come Test set (senza rating)
  *   - lancia il Recommender e attende le predizioni di risultato

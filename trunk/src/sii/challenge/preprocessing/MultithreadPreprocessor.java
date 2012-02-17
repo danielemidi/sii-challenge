@@ -7,8 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Permette di effettuare il preprocessamento dei dati per la similarità statica tra movie. 
- * Ottimizzato per usare più thread per il preprocessamente e si basa sui metodi definiti in Preprocessor
+ * Estende la classe Preprocessor per effettuare il preprocessamento dei dati per la similarità statica tra movie sfruttando più thread paralleli.
  * @author Daniele Midi, Antonio Tedeschi
  *
  */

@@ -10,6 +10,11 @@ import java.util.List;
 import sii.challenge.domain.MovieRating;
 import sii.challenge.util.DataSource;
 
+/**
+ * Implementa un Repository per la CrossValidation basata su Kset determinando dinamicamente training set e test set
+ * @author Daniele Midi, Antonio Tedeschi
+ *
+ */
 public class KSetRepository extends Repository implements IKSetRepository {
 
 	private DataSource dataSource;
