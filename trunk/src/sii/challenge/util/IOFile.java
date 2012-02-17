@@ -5,13 +5,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import sii.challenge.Recommender;
 import sii.challenge.domain.MovieRating;
-import sii.challenge.repository.Repository;
 
 /**
  * Classe designata per la lettura del file contenente le tuple (user,movie,timestamp) di cui si vuole predire il rating, che saranno scritti in un file opportunamente creato.

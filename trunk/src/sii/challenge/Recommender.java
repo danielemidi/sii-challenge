@@ -39,7 +39,6 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 	 */
 	public Recommender(IRepository repository)
 	{
-		System.out.println("R - Creating Predictor(s)...");
 		this.predictors = new IPredictor[]{
 			new ExistingRatingPredictor(repository),
 			new MatrixFactorizationPredictor(repository),
@@ -52,7 +51,6 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 	{
 		float p = 0;
 		
-		System.out.println("R - Recommending...");
 		List<MovieRating> ratings = new LinkedList<MovieRating>();
 		
 		for(MovieRating mr : input)
@@ -75,6 +73,8 @@ public class Recommender implements Callable<List<MovieRating>>, IRecommender {
 				p
 			);
 			ratings.add(pmr);
+			
+			System.out.print(".");
 		}
 		
 		return ratings;
