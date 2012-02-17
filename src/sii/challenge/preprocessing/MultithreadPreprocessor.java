@@ -73,19 +73,19 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 	
 	/**
 	 * Stampa a video gli id dei due movie, i relativi gradi di somiglianza e la similarità totale tra i due movie.
-	 * @param id1: id del primo movie
-	 * @param id2: id del secondo movie con cui si è fatto il confronto
-	 * @param actorsincommon: numero di attori in comune
-	 * @param directorsincommon: numero di registi in comune
-	 * @param genresincommon: numero di generi in comune
-	 * @param countriesincommon: numero di country in comune
-	 * @param tagsincommon: numero di tag in comune
-	 * @param allcriticsscorediscrepance: discrepanza tra gli allcriticsscore assegnati ai movie
-	 * @param topcriticsscorediscrepance: discrepanza tra gli topcriticsscorediscrepance assegnati ai movie
-	 * @param audiencescorediscrepance: discrepanza tra gli audiencescorediscrepance assegnati ai movie
-	 * @param decadediscrepance: discrepanza tra le decadi dei due movie
-	 * @param similarity: valore di similarità tra i due movie compresa tra [0,1]
-	 * @return una stringa
+	 * @param id1 id del primo movie
+	 * @param id2 id del secondo movie con cui si è fatto il confronto
+	 * @param actorsincommon numero di attori in comune
+	 * @param directorsincommon numero di registi in comune
+	 * @param genresincommon numero di generi in comune
+	 * @param countriesincommon numero di country in comune
+	 * @param tagsincommon numero di tag in comune
+	 * @param allcriticsscorediscrepance discrepanza tra gli allcriticsscore assegnati ai movie
+	 * @param topcriticsscorediscrepance discrepanza tra gli topcriticsscorediscrepance assegnati ai movie
+	 * @param audiencescorediscrepance discrepanza tra gli audiencescorediscrepance assegnati ai movie
+	 * @param decadediscrepance discrepanza tra le decadi dei due movie
+	 * @param similarity valore di similarità tra i due movie compresa tra [0,1]
+	 * @return una stringa contentenente le informazioni descritte
 	 */
 	protected String formatSimilarityLogLine(int id1, int id2, float actorsincommon, float directorsincommon, float genresincommon, float countriesincommon, float tagsincommon, float allcriticsscorediscrepance, float topcriticsscorediscrepance, float audiencescorediscrepance, float decadediscrepance, float similarity) {
 		return "["+this.mod+"] " + super.formatSimilarityLogLine(id1, id2, actorsincommon, directorsincommon, genresincommon, countriesincommon, tagsincommon, allcriticsscorediscrepance, topcriticsscorediscrepance, audiencescorediscrepance, decadediscrepance, similarity);
