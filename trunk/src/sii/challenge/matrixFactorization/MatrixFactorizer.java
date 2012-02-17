@@ -83,7 +83,7 @@ public class MatrixFactorizer {
 	 * Date due matrici ritorna il prodotto matriciale di queste
 	 * @param P
 	 * @param Q
-	 * @return una matrice
+	 * @return il prodotto matriciale
 	 */
 	public static Matrix dot(Matrix P, Matrix Q){
 		return P.times(Q);
