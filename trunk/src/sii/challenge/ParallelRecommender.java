@@ -13,12 +13,6 @@ import sii.challenge.repository.*;
  */
 public class ParallelRecommender implements IRecommender {
 	
-	/**
-	 * Effettua la raccomandazione dei film si veda il metodo recommend della classe Recommender
-	 * @param input: lista di MovieRating di cui si vuole avere la predizione
-	 * @return la lista in inpunt in cui l'attributo rating degli oggetti MovieRating è stato aggiornato
-	 * @throws Exception
-	 */
 	public List<MovieRating> recommend(List<MovieRating> input) throws Exception
 	{
 		List<MovieRating> output = new ArrayList<MovieRating>();

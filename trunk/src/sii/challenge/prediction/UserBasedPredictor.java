@@ -20,20 +20,36 @@ public class UserBasedPredictor implements IPredictor {
 		this.repository = repository;
 	}
 	
-	/**
-	 * MODIFICARE LA QUERY!!!!!!
-	 */
+
 	@Override
 	public float PredictRating(int userid, int movieid, long timestamp) {
 		float p = 0;
 		try {
 			p = this.repository.getSingleFloatValue(
-					"SELECT SUM(URM.rating * (ISS.genres))/SUM(ISS.genres) FROM " +
-					"(SELECT * FROM user_ratedmovies WHERE userID=? AND movieID<>?) URM " +
-					"JOIN " +
-					"(SELECT iditem2, similarity FROM item_static_similarities WHERE iditem1=? ORDER BY similarity DESC LIMIT 100) ISS " +
-					"ON URM.movieID=ISS.iditem2", 
-					new int[]{ userid, movieid, movieid } );
+					
+					"SELECT biasU1 + SUM(pearsoncorr*(ABS(ratingU2 - biasU2)))/SUM(pearsoncorr)" +
+					"FROM (" +
+						"SELECT pearsoncorr, biasU1, biasU2, UR.rating as ratingU2" +
+							"FROM (" +
+							" SELECT A.U1, A.U2, user_pearson_correlation(A.U1,A.U2) as pearsoncorr, B.biasU1, B.biasU2" +
+							"FROM (" +
+								" SELECT DISTINCT URM1.userID AS U1, URM2.userID AS U2" +
+								" FROM user_ratedmovies URM1 JOIN user_ratedmovies URM2 ON URM1.userID= ? AND URM2.userID<>URM1.userID AND URM1.movieID=URM2.movieID"+
+								"AND ABS(DATEDIFF(FROM_UNIXTIME(URM1.timestamp/1000), FROM_UNIXTIME(URM2.timestamp/1000))) < 7" +
+						") AS A" +
+						"JOIN (" +
+							"SELECT DISTINCT URM1.userID AS U1, AVG(URM1.rating) AS biasU1, URM2.userID AS U2, AVG(URM2.rating) AS biasU2" +
+							"FROM user_ratedmovies URM1 JOIN user_ratedmovies URM2 ON URM1.userID=? AND URM1.movieID <> ? AND URM1.userID <> URM2.userID" +
+								"GROUP BY  URM2.userID"+
+							")AS B "+
+						"ON A.U1 = B.U1 AND A.U2 = B.U2" +
+						" ) as VAL" +
+						"JOIN" +
+						"user_ratedmovies UR" +
+						"ON UR.userID = VAL.U2 AND UR.movieID = ?" +
+						") AS PRED",
+					
+					new int[]{ userid, userid, movieid, movieid } );
 			
 		} catch (Exception e) {
 			return 0;

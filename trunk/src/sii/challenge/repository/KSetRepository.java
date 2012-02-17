@@ -101,15 +101,7 @@ public class KSetRepository extends Repository implements IKSetRepository {
 		return super.getMovieRatingList(query, args);
 	}
 	
-	
-	
-	/**
-	 * Restituisce l'i-esimo set della tabella degli UserRatings, divisa in K set.
-	 * @param k number of set in which to split the whole table
-	 * @param i zero-based index of the set to retrieve
-	 * @return
-	 * @throws Exception 
-	 */
+
 	public List<MovieRating> getTestSet() throws Exception {
 		Connection connection = this.dataSource.getConnection();
 		PreparedStatement statement = null;
