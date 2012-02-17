@@ -4,13 +4,14 @@ import java.util.List;
 
 import sii.challenge.domain.MovieRating;
 /**
- * 
+ * Interfaccia per l'utilizzo trasparente del Repository dividendo i dati in K set per l'applicazione della Cross Validation 
  * @author Daniele Midi, Antonio Tedeschi
  *
  */
 public interface IKSetRepository extends IRepository {
 	/**
-	 * Restiuisce una lista di MovieRating che verrà utilizzata come set per il testing
+	 * Restiuisce il test set corrente sotto forma di lista di MovieRating 
+	 * che verrà utilizzata come set per il testing
 	 * @return una lista di MovieRating
 	 * @throws Exception
 	 */
@@ -18,7 +19,7 @@ public interface IKSetRepository extends IRepository {
 
 	/**
 	 * Restituisce la grandezza del set
-	 * @return un intero
+	 * @return la dimensione del set
 	 */
 	int getKSetSize();
 	
