@@ -6,7 +6,7 @@ import java.util.List;
 import Jama.*;
 
 /**
- * Attraverso la Classe MatrixFactorizer è possibile determinare la fattorizzazione di una matrice attreverso la regolarizzazione dei parametri.
+ * Effettua la fattorizzazione di una matrice attreverso la regolarizzazione dei parametri.
  * @author Daniele Midi, Antonio Tedeschi
  */
 public class MatrixFactorizer {
@@ -91,7 +91,7 @@ public class MatrixFactorizer {
 	
 	/**
 	 * Stampa a video la matrice passata come parametro
-	 * @param R
+	 * @param R matrice
 	 */
 	public static void printMatrix(Matrix R)
 	{	

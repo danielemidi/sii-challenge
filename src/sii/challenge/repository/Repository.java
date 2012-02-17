@@ -11,7 +11,7 @@ import sii.challenge.domain.MovieRating;
 import sii.challenge.util.DataSource;
 
 /**
- * 
+ * Definisce il punto di accesso verso il DataBase permettendo di effettuare agilmente query complesse
  * @author Daniele Midi, Antonio Tedeschi
  *
  */

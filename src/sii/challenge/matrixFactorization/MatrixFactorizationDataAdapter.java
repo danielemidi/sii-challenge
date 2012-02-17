@@ -8,7 +8,7 @@ import sii.challenge.domain.MovieRating;
 import sii.challenge.repository.IRepository;
 
 /**
- * Prende i rating dal DB e crea una matrice UxI->R utile alla MatrixFactorization
+ * Effettua le conversioni delle strutture dati per il preprocessamento della matrix factorization da e verso il database
  * @author Daniele Midi, Antonio Tedeschi
  *
  */
@@ -50,8 +50,8 @@ public class MatrixFactorizationDataAdapter {
 
 
 	/**
-	 *  DA RICONTROLLARE
-	 * @return
+	 * Prende i rating dal DB e crea una matrice UxI->R utile alla MatrixFactorization
+	 * @return una matrice
 	 * @throws Exception
 	 */
 	public Matrix readAndAdapt() throws Exception {
@@ -105,7 +105,7 @@ public class MatrixFactorizationDataAdapter {
 	}
 	
 	/**
-	 * 
+	 * Converte la matrice risultante dalla fattorizzazione in tuple da scrivere sul database
 	 * @param matrix
 	 * @param offseti
 	 * @param offsetj
