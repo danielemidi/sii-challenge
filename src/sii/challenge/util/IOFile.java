@@ -22,7 +22,7 @@ public class IOFile {
 
 	/**
 	 * Legge il file dato dal percorso e contente le tuple (user,movie,timestamp) che devono essere esaminate
-	 * @param path: percorso del file contente le tuple che devono essere lette
+	 * @param path percorso del file contente le tuple che devono essere lette
 	 * @return una lista di tipo MovieRating contenente le tuple presenti nel file
 	 * @throws Exception
 	 */
@@ -64,8 +64,8 @@ public class IOFile {
 	
 	/**
 	 * Scrive in coda ad un file designato i rating definiti.
-	 * @param movieRatings: lista di oggetti MovieRating di cui si è determinata la predizione
-	 * @param fileOutPut: percorso in cui è presente il file in cui si deve scrivere
+	 * @param movieRatings lista di oggetti MovieRating di cui si è determinata la predizione
+	 * @param fileOutPut percorso in cui è presente il file in cui si deve scrivere
 	 * @throws Exception
 	 */
 	public static void appendToOutputFile(List<MovieRating> movieRatings, String fileOutPut) throws Exception {

@@ -55,7 +55,7 @@ public class TestRecommender implements Callable<List<MovieRating>>, IRecommende
 	/**
 	 * Effettua la predizione adottando i predittori che sono stati assegnati al recommender, effettuando un arrotondamento di questi valori
 	 * per rapportarsi alla scala di voti da 0.5 a 5 con passo di 0.5.
-	 * @param input: lista di movie rating che devono essere raccomandati e di cui si vuole conoresce il rating
+	 * @param input lista di movie rating che devono essere raccomandati e di cui si vuole conoresce il rating
 	 * @return una lista di oggetti MovieRating contentente i rating relative alle tuple passate in input
 	 * @throws Exception
 	 */

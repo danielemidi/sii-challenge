@@ -22,8 +22,8 @@ public class MultithreadPreprocessor extends Preprocessor implements Runnable {
 	 * Custruttore
 	 * @param mod
 	 * @param tot
-	 * @param id1greaterthan: id del movie da cui iniziare il preprocessamento
-	 * @param id1lessthan: id di fine per il preprocessamento
+	 * @param id1greaterthan id del movie da cui iniziare il preprocessamento
+	 * @param id1lessthan id di fine per il preprocessamento
 	 */
 	public MultithreadPreprocessor(int mod, int tot, int id1greaterthan, int id1lessthan)
 	{
