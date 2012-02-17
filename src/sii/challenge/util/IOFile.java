@@ -73,31 +73,10 @@ public class IOFile {
 		FileWriter fstream = new FileWriter(fileOutPut);
 		BufferedWriter out = new BufferedWriter(fstream);
 		for (MovieRating mr : movieRatings)
-			//out.write(mr.getUserId() + "\t" + mr.getMovieId() + "\t" + mr.getTimestamp() + "\t" + mr.getRating() + "\n");
-			out.write(mr.getRating() + "\n");
+			out.write(mr.getUserId() + "\t" + mr.getMovieId() + "\t" + mr.getTimestamp() + "\t" + mr.getRating() + "\n");
+			//out.write(mr.getRating() + "\n");
 
 		out.close();
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		// "C:/Users/Antedesk/Desktop/Challenge/ChallengeDataset/user_ratedmovies.dat
-		System.out.print("Inserire percorso del file di input da caricare: ");
-		String fileInPut = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-
-		// "C:/Users/Antedesk/Desktop/fileoutpu.dat
-		System.out
-				.print("Inserire percorso di destinazione del file di output seguito dal nome: ");
-		String fileOutPut = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-
-		List<MovieRating> inputList = leggiRigaSplit(fileInPut);
-		Repository repository = new Repository();
-		Recommender recommender = new Recommender(repository);
-		List<MovieRating> predictions = recommender.recommend(inputList);
-
-		appendToOutputFile(predictions, fileOutPut);
-
-		System.out.println("Grazie per aver usato il nostro sistema di raccomandazione \n A presto.");
 	}
 
 }
