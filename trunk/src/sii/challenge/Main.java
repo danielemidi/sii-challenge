@@ -1,13 +1,8 @@
 package sii.challenge;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import sii.challenge.domain.MovieRating;
-import sii.challenge.repository.Repository;
 import sii.challenge.util.IOFile;
 
 
@@ -25,18 +20,27 @@ public class Main {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		
-		String inputfilename = args[1];
-		String outputfilename = args[2];
-		
-		List<MovieRating> inputList = IOFile.leggiRigaSplit(inputfilename);
-		
-		IOFile.truncateOutputFile(outputfilename);
-		
-		List<MovieRating> predictions = new ParallelRecommender().recommend(inputList);
-		IOFile.appendToOutputFile(predictions, outputfilename);
 
-		System.out.println("Grazie per aver usato il nostro Sistema di Raccomandazione!\nA presto.");
+		System.out.println("SIIChallenge (Daniele MIDI, Antonio Tedeschi)");
+		
+		if(args.length<3) {
+
+			System.out.println("Usage: siichallenge.jar <inputfile> <outputfile>");
+			
+		} else {
+		
+			String inputfilename = args[0];
+			String outputfilename = args[1];
+			
+			List<MovieRating> inputList = IOFile.leggiRigaSplit(inputfilename);
+			
+			IOFile.truncateOutputFile(outputfilename);
+			
+			List<MovieRating> predictions = new ParallelRecommender().recommend(inputList);
+			IOFile.appendToOutputFile(predictions, outputfilename);
+	
+			System.out.println("Grazie per aver usato il nostro Sistema di Raccomandazione!\nA presto.");
+		}
 	}
 
 }
