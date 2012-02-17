@@ -23,7 +23,7 @@ public class Main {
 
 		System.out.println("SIIChallenge (Daniele MIDI, Antonio Tedeschi)");
 		
-		if(args.length<3) {
+		if(args.length<2) {
 
 			System.out.println("Usage: siichallenge.jar <inputfile> <outputfile>");
 			
