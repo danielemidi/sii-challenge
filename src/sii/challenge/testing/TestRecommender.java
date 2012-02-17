@@ -10,7 +10,9 @@ import sii.challenge.prediction.*;
 import sii.challenge.repository.IRepository;
 
 /**
- * Ha il medesimo comportamento della Classe Recommender, ma è utilizzata per scopi di Testing
+ * Crea il Recommender per il test, costituito da un array di predittori, di predizioni, di errori di predizione, di MAE. In questo modo si eseguono contemporaneamente tre predittori.
+ * Pertanto se uno fallisce, ossia se la predizione determinata è nulla, subentra il predittore successivo (tecnica di fallback)
+ * 
  * @author Daniele Midi, Antonio Tedeschi 
  *
  */
@@ -128,15 +130,6 @@ public class TestRecommender implements Callable<List<MovieRating>>, IRecommende
 		
 		return ratings;
 	}
-	
-	/*private void printStats(int i, int c, IPredictor p, float exp, float act)
-	{
-		System.out.println("\t" + i + "/" + c + "; " +
-						   "Predictor: " + p.getClass().getName() + "; " +
-						   "Expected: " + exp + "; " +
-						   "Actual: " + act + "; " +
-						   "Error: " + Math.abs(exp-act) + ". ");
-	}*/
 
 	@Override
 	public List<MovieRating> call() throws Exception {

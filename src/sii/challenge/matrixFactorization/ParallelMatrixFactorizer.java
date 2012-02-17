@@ -46,7 +46,7 @@ public class ParallelMatrixFactorizer implements Runnable {
 	 * @throws Exception
 	 */
 	public void factorize() throws Exception {
-		int K = 4;
+		int K = 8;
 
 		int blocksize = 50;
 		for(int blocki = 0, i = 0; blocki < R.getRowDimension(); blocki+=blocksize, i++) {
@@ -54,6 +54,7 @@ public class ParallelMatrixFactorizer implements Runnable {
 				for(int blockj = 0, j = 0; blockj < R.getColumnDimension(); blockj+=blocksize, j++) {
 					if((((j%2==0) && doEvenCols) || ((j%2!=0) && !doEvenCols) ) && !isAlreadyFactorized(blocki, blockj)) {
 						
+						try{
 						Matrix SubR = R.getMatrix(blocki, blocki+blocksize-1, blockj, blockj+blocksize-1);
 						int U = SubR.getRowDimension();
 						int	M = SubR.getColumnDimension();
@@ -68,14 +69,14 @@ public class ParallelMatrixFactorizer implements Runnable {
 						nQ = nQ.transpose();
 						Matrix nR = MatrixFactorizer.dot(nP,nQ);
 						
-						//Matrix err = SubR.minus(nR);
-						//MatrixFactorizer.printMatrix(err);
-						
 						System.out.println(this.taskid+" Factorization complete. Writing... ");
 		
 						dataadapter.adaptAndWrite(nR, blocki, blockj);
 						
 						System.out.println("done.");
+						}catch(Exception ex){
+							ex.printStackTrace();
+						}
 					}
 				}
 			}

@@ -33,18 +33,6 @@ public class Main {
 		
 		IOFile.truncateOutputFile(outputfilename);
 		
-		/*int taskcount = Runtime.getRuntime().availableProcessors();
-		int inputlistsize = inputList.size();
-		List<Future<List<MovieRating>>> tasks = new ArrayList<Future<List<MovieRating>>>(taskcount);
-		ExecutorService pool = Executors.newFixedThreadPool(taskcount);
-		for(int i = 0; i < taskcount; i++)
-			tasks.add(pool.submit(new Recommender(new Repository(), inputList.subList(inputlistsize/taskcount*i, inputlistsize/taskcount*(i+1)))));
-				
-		for(Future<List<MovieRating>> t : tasks) 
-			IOFile.appendToOutputFile(t.get(), outputfilename);
-			
-		pool.shutdown();*/
-		
 		List<MovieRating> predictions = new ParallelRecommender().recommend(inputList);
 		IOFile.appendToOutputFile(predictions, outputfilename);
 

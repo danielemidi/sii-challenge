@@ -55,7 +55,6 @@ public class Repository implements IRepository {
 		float result = 0;
 		
 		try {
-			//connection = this.dataSource.getConnection();
 			result = this.getSingleFloatValue(query, args, this.persistentConnection);
 		} catch(Exception e) {
 			
@@ -119,7 +118,6 @@ public class Repository implements IRepository {
 		float result = 0;
 		
 		try {
-			//connection = this.dataSource.getConnection();
 			result = this.getSingleFloatValue(query, args, this.persistentConnection);
 		} catch(Exception e) {
 			
