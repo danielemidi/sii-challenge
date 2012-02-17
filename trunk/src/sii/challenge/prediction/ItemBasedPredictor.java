@@ -3,7 +3,7 @@ package sii.challenge.prediction;
 import sii.challenge.repository.IRepository;
 
 /**
- * Classico approccio Item-Based NN, necessario il preprocessamento delle similarità tra gli utenti con la Adjusted Cosine Similarity definita come funzione in MySQL 
+ * Definisce il classico approccio Item-Based NN, necessario il preprocessamento delle similarità tra gli utenti con la Adjusted Cosine Similarity definita come funzione in MySQL 
  * per aumentare la velocità di elaborazione.
  * @author Daniele Midi, Antonio Tedeschi
  *
