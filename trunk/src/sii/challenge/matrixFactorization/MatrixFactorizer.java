@@ -17,13 +17,13 @@ public class MatrixFactorizer {
 			
 	/**
 	 * Effettua l'aggiornamento delle matrici P e Q minimizzando l'error quadratico tra il rating reale e quello predetto
-	 * @param R: matrice di rating 
-	 * @param P: matrice relativa alle feature dell'user
-	 * @param Q: matrice relativa alle feature del movie
-	 * @param K: nummero di feature
-	 * @param step: numero di ere
-	 * @param alpha: learning rate
-	 * @param beta: fattore di regolarizzazione
+	 * @param R matrice di rating 
+	 * @param P matrice relativa alle feature dell'user
+	 * @param Q matrice relativa alle feature del movie
+	 * @param K nummero di feature
+	 * @param step numero di ere
+	 * @param alpha learning rate
+	 * @param beta fattore di regolarizzazione
 	 * @return una lista di tipo Matrix contente le matrici P e Q
 	 */
 	public static List<Matrix> factorize(Matrix R, Matrix P, Matrix Q, int K,int step, float alpha, float beta) {
